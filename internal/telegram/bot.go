@@ -7,11 +7,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Bot telegram
 type Bot struct {
 	bot    *tgbotapi.BotAPI
 	userID int
 }
 
+// New telegram bot
 func New(c *config.Bot) (*Bot, error) {
 	bot, err := tgbotapi.NewBotAPI(c.BotToken)
 	if err != nil {
@@ -26,6 +28,7 @@ func New(c *config.Bot) (*Bot, error) {
 	}, nil
 }
 
+// Start telegram bot
 func (b *Bot) Start() error {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60

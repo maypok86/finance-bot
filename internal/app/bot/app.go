@@ -10,10 +10,12 @@ import (
 	"github.com/pkg/errors"
 )
 
+// App Telegram bot
 type App struct {
 	bot *telegram.Bot
 }
 
+// New create new telegram bot app
 func New(c *config.Config) (*App, error) {
 	bot, err := telegram.New(c.Bot)
 	if err != nil {
@@ -24,6 +26,7 @@ func New(c *config.Config) (*App, error) {
 	}, nil
 }
 
+// Start telegram bot app
 func (a *App) Start() error {
 	eChan := make(chan error)
 	quit := make(chan os.Signal, 1)

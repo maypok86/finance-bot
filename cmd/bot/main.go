@@ -2,10 +2,11 @@ package main
 
 import (
 	"flag"
+	"log"
+
 	"github.com/LazyBearCT/finance-bot/internal/app/bot"
 	"github.com/LazyBearCT/finance-bot/internal/config"
 	"github.com/LazyBearCT/finance-bot/internal/logger"
-	"log"
 )
 
 var (

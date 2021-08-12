@@ -2,12 +2,13 @@ package config
 
 import (
 	"fmt"
-	"github.com/kelseyhightower/envconfig"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/kelseyhightower/envconfig"
 
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
@@ -43,6 +44,7 @@ func (c *Config) parseEnvVars() error {
 	return envconfig.Process("", c)
 }
 
+// Parse config file and env vars
 func Parse(configPath string) (*Config, error) {
 	c := new(Config)
 	if err := c.parseFile(configPath); err != nil {

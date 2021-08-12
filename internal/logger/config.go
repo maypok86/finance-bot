@@ -29,6 +29,7 @@ func getLoggerLevel(lvl string) zapcore.Level {
 	return zapcore.InfoLevel
 }
 
+// Configure logger
 func Configure(config *config.Logger) {
 	level := getLoggerLevel(strings.ToLower(config.Level))
 

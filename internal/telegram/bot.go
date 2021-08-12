@@ -4,13 +4,12 @@ import (
 	"github.com/LazyBearCT/finance-bot/internal/config"
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/pkg/errors"
 )
 
 // Bot telegram
 type Bot struct {
-	bot    *tgbotapi.BotAPI
-	userID int
+	bot      *tgbotapi.BotAPI
+	accessID int
 }
 
 // New telegram bot
@@ -23,8 +22,8 @@ func New(c *config.Bot) (*Bot, error) {
 	logger.Infof("Authorized on account %s", bot.Self.UserName)
 
 	return &Bot{
-		bot:    bot,
-		userID: c.AccessID,
+		bot:      bot,
+		accessID: c.AccessID,
 	}, nil
 }
 
@@ -38,23 +37,16 @@ func (b *Bot) Start() error {
 		return err
 	}
 
-	for update := range updates {
-		if update.Message == nil { // ignore any non-Message Updates
-			continue
-		}
-		if update.Message.From.ID != b.userID {
-			return errors.New("wrong id")
-		}
-
-		logger.Infof("[%s] %s", update.Message.From.UserName, update.Message.Text)
-
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-		msg.ReplyToMessageID = update.Message.MessageID
-
-		_, err := b.bot.Send(msg)
-		if err != nil {
-			logger.Error(err)
-		}
+	if err := b.handleUpdates(updates); err != nil {
+		return err
 	}
+
 	return nil
+}
+
+func (b *Bot) send(msg tgbotapi.Chattable) {
+	_, err := b.bot.Send(msg)
+	if err != nil {
+		logger.Error(err)
+	}
 }

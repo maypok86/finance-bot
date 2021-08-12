@@ -2,10 +2,9 @@ SHELL := /bin/bash
 
 BIN := "./bin/bot"
 SRC := "./cmd/bot"
-PROJECT := "github.com/LazyBearCT/finance-bot"
 
 GIT_HASH := $(shell git log --format="%h" -n 1)
-LDFLAGS := -X $(PROJECT)/main.release="develop" -X $(PROJECT)/main.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S) -X $(PROJECT)/main.gitHash=$(GIT_HASH)
+LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S) -X main.gitHash=$(GIT_HASH)
 
 .PHONY: setup
 setup: ## Install all the build and lint dependencies

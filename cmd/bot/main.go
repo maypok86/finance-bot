@@ -1,13 +1,11 @@
 package main
 
 import (
-	"errors"
 	"flag"
+	"github.com/LazyBearCT/finance-bot/internal/app/bot"
+	"github.com/LazyBearCT/finance-bot/internal/config"
+	"github.com/LazyBearCT/finance-bot/internal/logger"
 	"log"
-	"os"
-	"strconv"
-
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 var (
@@ -32,43 +30,18 @@ func main() {
 }
 
 func run() error {
-	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
+	c, err := config.Parse(configPath)
 	if err != nil {
 		return err
 	}
 
-	id, err := strconv.Atoi(os.Getenv("ACCESS_ID"))
+	logger.Configure(c.Logger)
+	logger.Info(c.Logger)
+
+	b, err := bot.New(c)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
-
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
-
-	updates, err := bot.GetUpdatesChan(u)
-	if err != nil {
-		return err
-	}
-
-	for update := range updates {
-		if update.Message == nil { // ignore any non-Message Updates
-			continue
-		}
-		if update.Message.From.ID != id {
-			return errors.New("wrong id")
-		}
-
-		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-		msg.ReplyToMessageID = update.Message.MessageID
-
-		_, err := bot.Send(msg)
-		if err != nil {
-			log.Println(err)
-		}
-	}
-	return nil
+	return b.Start()
 }

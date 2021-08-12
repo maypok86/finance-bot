@@ -19,7 +19,7 @@ build: ## Build a version
 .PHONY: run
 run: build ## Build and run a version
 	echo -n > develop.log
-	source ./scripts/env.sh && $(BIN) start --config configs/config.yml
+	source ./scripts/env.sh && $(BIN) -config configs/config.yml
 
 .PHONY: version
 version: build ## Build and view project version

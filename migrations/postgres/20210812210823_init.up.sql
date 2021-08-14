@@ -1,4 +1,4 @@
-CREATE TABLE budget (
+CREATE TABLE budgets (
     codename varchar(255) PRIMARY KEY,
     daily_limit integer NOT NULL
 );
@@ -33,4 +33,4 @@ VALUES
     ('subscriptions', 'подписки', false, 'подписка'),
     ('other', 'прочее', true, '');
 
-INSERT INTO budget(codename, daily_limit) VALUES ('base', 500);
+INSERT INTO budgets(codename, daily_limit) VALUES ('base', 500);

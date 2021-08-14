@@ -2,10 +2,11 @@ package bot
 
 import (
 	"context"
-	"github.com/LazyBearCT/finance-bot/internal/service"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/LazyBearCT/finance-bot/internal/service"
 
 	"github.com/LazyBearCT/finance-bot/internal/repository"
 
@@ -16,7 +17,7 @@ import (
 
 // App Telegram bot
 type App struct {
-	bot  *telegram.Bot
+	bot *telegram.Bot
 }
 
 // New create new telegram bot app
@@ -37,7 +38,7 @@ func New(ctx context.Context, c *config.Config) (*App, error) {
 	}
 
 	return &App{
-		bot:  bot,
+		bot: bot,
 	}, nil
 }
 

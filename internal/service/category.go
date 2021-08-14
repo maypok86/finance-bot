@@ -16,14 +16,14 @@ type Category interface {
 }
 
 type categoryService struct {
-	ctx context.Context
+	ctx        context.Context
 	repo       repository.Category
 	categories []*model.Category
 }
 
 func NewCategory(ctx context.Context, repo repository.Category) Category {
 	return &categoryService{
-		ctx: ctx,
+		ctx:  ctx,
 		repo: repo,
 	}
 }

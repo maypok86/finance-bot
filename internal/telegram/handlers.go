@@ -30,8 +30,11 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) {
 	msg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
 	msg.ReplyToMessageID = message.MessageID
 
-	_, err := b.bot.Send(msg)
-	if err != nil {
-		logger.Error(err)
-	}
+	b.send(msg)
+}
+
+func (b *Bot) handleError(id int64, err error) {
+	logger.Error(err)
+	msg := tgbotapi.NewMessage(id, err.Error())
+	b.send(msg)
 }

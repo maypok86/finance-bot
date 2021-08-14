@@ -9,6 +9,7 @@ import (
 
 type Manager struct {
 	Category Category
+	Budget Budget
 }
 
 func NewManager(ctx context.Context, repo *repository.Repository) (*Manager, error) {
@@ -17,5 +18,6 @@ func NewManager(ctx context.Context, repo *repository.Repository) (*Manager, err
 	}
 	return &Manager{
 		Category: NewCategory(ctx, repo.Category),
+		Budget: NewBudget(ctx, repo.Budget),
 	}, nil
 }

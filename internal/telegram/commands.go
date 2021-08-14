@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/LazyBearCT/finance-bot/internal/logger"
@@ -28,6 +29,13 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) {
 		b.handleStartCommand(message)
 	case commandCategories:
 		b.handleCategoriesCommand(message)
+	case "limit":
+		limit, err := b.manager.Budget.GetDailyLimitByName("base")
+		if err != nil {
+			b.handleError(message.Chat.ID, err)
+		}
+		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("Базовый дневной бюджет: %d", limit))
+		b.send(msg)
 	default:
 		b.handleUnknownCommand(message)
 	}
@@ -36,16 +44,14 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) {
 func (b *Bot) handleCategoriesCommand(message *tgbotapi.Message) {
 	categories, err := b.manager.Category.GetAll()
 	if err != nil {
-		logger.Error(err)
-		msg := tgbotapi.NewMessage(message.Chat.ID, err.Error())
-		b.send(msg)
+		b.handleError(message.Chat.ID, err)
 		return
 	}
 	categoriesInfo := make([]string, 0, len(categories))
 	for _, c := range categories {
-		categoriesInfo = append(categoriesInfo, c.Name + " (" + strings.Join(c.Aliases, ", ") + ")")
+		categoriesInfo = append(categoriesInfo, c.Name+" ("+strings.Join(c.Aliases, ", ")+")")
 	}
-	msg := tgbotapi.NewMessage(message.Chat.ID, b.config.Message.Response.Categories + strings.Join(categoriesInfo, "\n* "))
+	msg := tgbotapi.NewMessage(message.Chat.ID, b.config.Message.Response.Categories+strings.Join(categoriesInfo, "\n* "))
 	b.send(msg)
 }
 

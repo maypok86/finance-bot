@@ -9,8 +9,8 @@ import (
 
 // Bot telegram
 type Bot struct {
-	bot    *tgbotapi.BotAPI
-	config *config.Bot
+	bot     *tgbotapi.BotAPI
+	config  *config.Bot
 	manager *service.Manager
 }
 
@@ -24,8 +24,8 @@ func New(c *config.Bot, manager *service.Manager) (*Bot, error) {
 	logger.Infof("Authorized on account %s", bot.Self.UserName)
 
 	return &Bot{
-		bot:    bot,
-		config: c,
+		bot:     bot,
+		config:  c,
 		manager: manager,
 	}, nil
 }

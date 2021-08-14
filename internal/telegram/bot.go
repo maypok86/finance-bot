@@ -3,17 +3,19 @@ package telegram
 import (
 	"github.com/LazyBearCT/finance-bot/internal/config"
 	"github.com/LazyBearCT/finance-bot/internal/logger"
+	"github.com/LazyBearCT/finance-bot/internal/service"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 // Bot telegram
 type Bot struct {
-	bot      *tgbotapi.BotAPI
-	accessID int
+	bot    *tgbotapi.BotAPI
+	config *config.Bot
+	manager *service.Manager
 }
 
 // New telegram bot
-func New(c *config.Bot) (*Bot, error) {
+func New(c *config.Bot, manager *service.Manager) (*Bot, error) {
 	bot, err := tgbotapi.NewBotAPI(c.BotToken)
 	if err != nil {
 		return nil, err
@@ -22,8 +24,9 @@ func New(c *config.Bot) (*Bot, error) {
 	logger.Infof("Authorized on account %s", bot.Self.UserName)
 
 	return &Bot{
-		bot:      bot,
-		accessID: c.AccessID,
+		bot:    bot,
+		config: c,
+		manager: manager,
 	}, nil
 }
 

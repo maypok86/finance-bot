@@ -6,33 +6,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-const (
-	commandStart = "start"
-	commandHelp = "help"
-)
-
-func (b *Bot) handleCommand(message *tgbotapi.Message) {
-	msg := tgbotapi.NewMessage(message.Chat.ID, "Я не знаю такой команды")
-	switch message.Command() {
-	case commandStart, commandHelp:
-		msg.Text = `Бот для учёта финансов
-		Добавить расход: 250 такси
-		Сегодняшняя статистика: /today
-		За текущий месяц: /month
-		Последние внесённые расходы: /expenses
-		Категории трат: /categories`
-		b.send(msg)
-	default:
-		b.send(msg)
-	}
-}
-
 func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message Updates
 			continue
 		}
-		if update.Message.From.ID != b.accessID {
+		if update.Message.From.ID != b.config.AccessID {
 			return errors.New("wrong id")
 		}
 

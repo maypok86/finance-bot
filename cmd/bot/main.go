@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 
@@ -25,12 +26,15 @@ func main() {
 		return
 	}
 
-	if err := run(); err != nil {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := run(ctx); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func run() error {
+func run(ctx context.Context) error {
 	c, err := config.Parse(configPath)
 	if err != nil {
 		return err
@@ -39,7 +43,7 @@ func run() error {
 	logger.Configure(c.Logger)
 	logger.Info(c.Logger)
 
-	b, err := bot.New(c)
+	b, err := bot.New(ctx, c)
 	if err != nil {
 		return err
 	}

@@ -1,9 +1,13 @@
 package bot
 
 import (
+	"context"
+	"github.com/LazyBearCT/finance-bot/internal/service"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/LazyBearCT/finance-bot/internal/repository"
 
 	"github.com/LazyBearCT/finance-bot/internal/config"
 	"github.com/LazyBearCT/finance-bot/internal/telegram"
@@ -12,17 +16,28 @@ import (
 
 // App Telegram bot
 type App struct {
-	bot *telegram.Bot
+	bot  *telegram.Bot
 }
 
 // New create new telegram bot app
-func New(c *config.Config) (*App, error) {
-	bot, err := telegram.New(c.Bot)
+func New(ctx context.Context, c *config.Config) (*App, error) {
+	repo, err := repository.New(ctx, c.DB)
 	if err != nil {
 		return nil, err
 	}
+
+	manager, err := service.NewManager(ctx, repo)
+	if err != nil {
+		return nil, err
+	}
+
+	bot, err := telegram.New(c.Bot, manager)
+	if err != nil {
+		return nil, err
+	}
+
 	return &App{
-		bot: bot,
+		bot:  bot,
 	}, nil
 }
 

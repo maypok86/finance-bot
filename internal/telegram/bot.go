@@ -47,7 +47,10 @@ func (b *Bot) Start() error {
 	return nil
 }
 
-func (b *Bot) send(msg tgbotapi.Chattable) {
+func (b *Bot) send(msg tgbotapi.MessageConfig) {
+	if msg.Text == "" {
+		return
+	}
 	_, err := b.bot.Send(msg)
 	if err != nil {
 		logger.Error(err)

@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"fmt"
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/pkg/errors"
@@ -26,10 +27,16 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 
 func (b *Bot) handleMessage(message *tgbotapi.Message) {
 	logger.Infof("[%s] %s", message.From.UserName, message.Text)
+	id := message.Chat.ID
 
-	msg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
-	msg.ReplyToMessageID = message.MessageID
+	expense, err := b.manager.Expense.AddExpense(message.Text)
+	if err != nil {
+		b.handleError(id, err)
+		return
+	}
 
+	amounts := fmt.Sprintf("Добавлены траты %d руб на %s.\n\n", expense.Amount, expense.CategoryCodename)
+	msg := tgbotapi.NewMessage(id, amounts + b.getTodayStatistics(id))
 	b.send(msg)
 }
 

@@ -5,7 +5,7 @@ import "gorm.io/datatypes"
 type Expense struct {
 	ID               int            `json:"id"`
 	Amount           int            `json:"amount"`
-	CreatedDate      datatypes.Date `json:"created_date"`
+	CreatedDate      datatypes.Date `json:"created_date" gorm:"default:CURRENT_DATE"`
 	CategoryCodename string         `json:"category_codename"`
 	RawText          string         `json:"raw_text"`
 }

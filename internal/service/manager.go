@@ -17,9 +17,13 @@ func NewManager(ctx context.Context, repo *repository.Repository) (*Manager, err
 	if repo == nil {
 		return nil, errors.New("No repo provided")
 	}
+	category, err := NewCategory(ctx, repo.Category)
+	if err != nil {
+		return nil, err
+	}
 	return &Manager{
-		Category: NewCategory(ctx, repo.Category),
+		Category: category,
 		Budget:   NewBudget(ctx, repo.Budget),
-		Expense:  NewExpense(ctx, repo.Expense),
+		Expense:  NewExpense(ctx, repo.Expense, category),
 	}, nil
 }

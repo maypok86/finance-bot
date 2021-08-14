@@ -46,35 +46,35 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) {
 
 func (b *Bot) handleTodayCommand(message *tgbotapi.Message) {
 	id := message.Chat.ID
+	msg := tgbotapi.NewMessage(id, b.getTodayStatistics(id))
+	b.send(msg)
+}
+
+func (b *Bot) getTodayStatistics(id int64) string {
 	allExpenses, err := b.manager.Expense.GetAllToday()
+	unknown := "Сегодня ещё нет расходов"
 	if err != nil {
-		b.handleError(id, err)
-		return
+		return unknown
 	}
 	baseExpenses, err := b.manager.Expense.GetBaseToday()
 	if err != nil {
 		b.handleError(id, err)
-		return
+		return unknown
 	}
 	dailyLimit, err := b.manager.Budget.GetDailyLimitByName("base")
 	if err != nil {
 		b.handleError(id, err)
-		return
+		return unknown
 	}
-	msg := tgbotapi.NewMessage(id, "")
-	msg.Text += "Расходы сегодня:\n"
-	msg.Text += fmt.Sprintf("всего — %d руб.\n", allExpenses)
-	msg.Text += fmt.Sprintf("базовые — %d руб. из %d руб.\n\n", baseExpenses, dailyLimit)
-	msg.Text += "За текущий месяц: /month"
-	b.send(msg)
+	text := "Расходы сегодня:\n"
+	text += fmt.Sprintf("всего — %d руб.\n", allExpenses)
+	text += fmt.Sprintf("базовые — %d руб. из %d руб.\n\n", baseExpenses, dailyLimit)
+	text += "За текущий месяц: /month"
+	return text
 }
 
 func (b *Bot) handleCategoriesCommand(message *tgbotapi.Message) {
-	categories, err := b.manager.Category.GetAll()
-	if err != nil {
-		b.handleError(message.Chat.ID, err)
-		return
-	}
+	categories := b.manager.Category.GetAll()
 	categoriesInfo := make([]string, 0, len(categories))
 	for _, c := range categories {
 		categoriesInfo = append(categoriesInfo, c.Name+" ("+strings.Join(c.Aliases, ", ")+")")

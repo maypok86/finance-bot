@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/LazyBearCT/finance-bot/internal/times"
 
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	"github.com/LazyBearCT/finance-bot/internal/model"
@@ -14,8 +15,8 @@ import (
 //go:generate mockgen -source=expense.go -destination=mocks/mock_expense.go
 
 type Expense interface {
-	GetAllToday() (int, error)
-	GetBaseToday() (int, error)
+	GetAllByPeriod(period times.Period) (int, error)
+	GetBaseByPeriod(period times.Period) (int, error)
 	GetLastExpenses() ([]*model.Expense, error)
 	AddExpense(rawMessage string) (*model.Expense, error)
 	DeleteByID(id int) error
@@ -35,20 +36,20 @@ func NewExpense(ctx context.Context, expenseRepo repository.Expense, category Ca
 	}
 }
 
-func (es *expenseService) GetAllToday() (int, error) {
-	allExpenses, err := es.repo.GetAllTodayExpenses(es.ctx)
+func (es *expenseService) GetAllByPeriod(period times.Period) (int, error) {
+	allExpenses, err := es.repo.GetAllExpensesByPeriod(es.ctx, period)
 	if err != nil {
 		return 0, err
 	}
-	return allExpenses, err
+	return allExpenses, nil
 }
 
-func (es *expenseService) GetBaseToday() (int, error) {
-	baseExpenses, err := es.repo.GetBaseTodayExpenses(es.ctx)
+func (es *expenseService) GetBaseByPeriod(period times.Period) (int, error) {
+	baseExpenses, err := es.repo.GetBaseExpensesByPeriod(es.ctx, period)
 	if err != nil {
 		return 0, err
 	}
-	return baseExpenses, err
+	return baseExpenses, nil
 }
 
 func (es *expenseService) GetLastExpenses() ([]*model.Expense, error) {

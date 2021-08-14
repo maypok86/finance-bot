@@ -2,6 +2,9 @@ package postgres
 
 import (
 	"context"
+	"fmt"
+	"github.com/LazyBearCT/finance-bot/internal/times"
+	"time"
 
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	"github.com/LazyBearCT/finance-bot/internal/model"
@@ -56,23 +59,37 @@ func (ep *ExpensePostgres) GetLastExpenses(ctx context.Context) ([]*model.Expens
 	return expenses, nil
 }
 
-func (ep *ExpensePostgres) GetAllTodayExpenses(ctx context.Context) (int, error) {
+func (ep *ExpensePostgres) GetAllExpensesByPeriod(ctx context.Context, period times.Period) (int, error) {
 	var allExpenses int
 	if err := ep.db.Model(new(model.Expense)).Select("SUM(amount)").Where(
-		"DATE(created_at) = CURRENT_DATE",
+		"DATE(created_at) " + getConditionByPeriod(period),
 	).Find(&allExpenses).Error; err != nil {
 		return 0, err
 	}
 	return allExpenses, nil
 }
 
-func (ep *ExpensePostgres) GetBaseTodayExpenses(ctx context.Context) (int, error) {
+func (ep *ExpensePostgres) GetBaseExpensesByPeriod(ctx context.Context, period times.Period) (int, error) {
 	var baseExpenses int
 	if err := ep.db.Model(new(model.Expense)).Select("SUM(amount)").Where(
-		`DATE(created_at) = CURRENT_DATE AND 
+		"DATE(created_at) " + getConditionByPeriod(period) + ` AND 
 			category_codename IN (SELECT codename FROM categories WHERE is_base_expense=true)`,
 	).Scan(&baseExpenses).Error; err != nil {
 		return 0, err
 	}
 	return baseExpenses, nil
+}
+
+func getConditionByPeriod(period times.Period) (condition string) {
+	switch period {
+	case times.Day:
+		condition = "= CURRENT_DATE"
+	case times.Month:
+		t := time.Now()
+		first := time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.UTC)
+		condition = fmt.Sprintf(">= '%s'", first.Format("2006-01-02"))
+	default:
+		panic("unknown period")
+	}
+	return
 }

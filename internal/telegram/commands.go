@@ -2,9 +2,11 @@ package telegram
 
 import (
 	"fmt"
+	"github.com/LazyBearCT/finance-bot/internal/times"
 	"github.com/pkg/errors"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -13,6 +15,7 @@ import (
 var (
 	todayError = errors.New("Сегодня ещё нет расходов")
 	lastError = errors.New("Расходы ещё не заведены")
+	monthError = errors.New("В этом месяце ещё нет расходов")
 )
 
 const (
@@ -20,6 +23,7 @@ const (
 	commandDelete     = "del"
 	commandCategories = "categories"
 	commandToday      = "today"
+	commandMonth = "month"
 	commandLast = "last"
 	commandHelp       = "help"
 )
@@ -40,18 +44,27 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) {
 		b.handleCategoriesCommand(message)
 	case commandToday:
 		b.handleTodayCommand(message)
+	case commandMonth:
+		b.handleMonthCommand(message)
 	case commandLast:
 		b.handleLastCommand(message)
 	case "limit":
 		limit, err := b.manager.Budget.GetDailyLimitByName("base")
 		if err != nil {
 			b.handleError(message.Chat.ID, err)
+			return
 		}
 		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("Базовый дневной бюджет: %d", limit))
 		b.send(msg)
 	default:
 		b.handleUnknownCommand(message)
 	}
+}
+
+func (b *Bot) handleMonthCommand(message *tgbotapi.Message) {
+	id := message.Chat.ID
+	msg := tgbotapi.NewMessage(id, b.getStatisticsByPeriod(id, times.Month))
+	b.send(msg)
 }
 
 func (b *Bot) handleLastCommand(message *tgbotapi.Message) {
@@ -74,17 +87,17 @@ func (b *Bot) handleLastCommand(message *tgbotapi.Message) {
 
 func (b *Bot) handleTodayCommand(message *tgbotapi.Message) {
 	id := message.Chat.ID
-	msg := tgbotapi.NewMessage(id, b.getTodayStatistics(id))
+	msg := tgbotapi.NewMessage(id, b.getStatisticsByPeriod(id, times.Day))
 	b.send(msg)
 }
 
-func (b *Bot) getTodayStatistics(id int64) string {
-	allExpenses, err := b.manager.Expense.GetAllToday()
+func (b *Bot) getStatisticsByPeriod(id int64, period times.Period) string {
+	allExpenses, err := b.manager.Expense.GetAllByPeriod(period)
 	if err != nil {
 		b.handleError(id, todayError)
 		return ""
 	}
-	baseExpenses, err := b.manager.Expense.GetBaseToday()
+	baseExpenses, err := b.manager.Expense.GetBaseByPeriod(period)
 	if err != nil {
 		b.handleError(id, todayError)
 		return ""
@@ -94,10 +107,19 @@ func (b *Bot) getTodayStatistics(id int64) string {
 		b.handleError(id, todayError)
 		return ""
 	}
-	text := "Расходы сегодня:\n"
-	text += fmt.Sprintf("всего — %d руб.\n", allExpenses)
+	var text string
+	all := fmt.Sprintf("всего — %d руб.\n", allExpenses)
 	text += fmt.Sprintf("базовые — %d руб. из %d руб.\n\n", baseExpenses, dailyLimit)
 	text += "За текущий месяц: /month"
+	switch period {
+	case times.Day:
+		text = "Расходы сегодня:\n"
+		text += all + fmt.Sprintf("базовые — %d руб. из %d руб.\n\n", baseExpenses, dailyLimit)
+		text += "За текущий месяц: /month"
+	case times.Month:
+		text = "Расходы в текущем месяце:\n"
+		text += all + fmt.Sprintf("базовые — %d руб. из %d руб.", baseExpenses, time.Now().Day() * dailyLimit)
+	}
 	return text
 }
 

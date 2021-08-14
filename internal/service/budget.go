@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/LazyBearCT/finance-bot/internal/repository"
 )
 
@@ -12,8 +13,8 @@ type Budget interface {
 }
 
 type budgetService struct {
-	ctx        context.Context
-	repo       repository.Budget
+	ctx  context.Context
+	repo repository.Budget
 }
 
 func NewBudget(ctx context.Context, repo repository.Budget) Budget {

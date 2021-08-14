@@ -13,7 +13,7 @@ CREATE TABLE categories (
 CREATE TABLE expenses (
     id serial PRIMARY KEY,
     amount integer NOT NULL,
-    created_at timestamptz NOT NULL DEFAULT CURRENT_DATE,
+    created_date date NOT NULL DEFAULT CURRENT_DATE,
     category_codename varchar(255) NOT NULL,
     raw_text text NOT NULL,
     FOREIGN KEY (category_codename) REFERENCES categories(codename)
@@ -33,4 +33,8 @@ VALUES
     ('subscriptions', 'подписки', false, 'подписка'),
     ('other', 'прочее', true, '');
 
-INSERT INTO budgets(codename, daily_limit) VALUES ('base', 500);
+INSERT INTO budgets (codename, daily_limit) VALUES ('base', 500);
+
+INSERT INTO expenses (amount, category_codename, raw_text)
+VALUES
+    (250, 'products', '250 пиво')

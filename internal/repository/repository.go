@@ -17,6 +17,7 @@ type Repository struct {
 	db       Database
 	Category Category
 	Budget   Budget
+	Expense  Expense
 }
 
 func New(ctx context.Context, config *config.DB) (*Repository, error) {
@@ -31,6 +32,7 @@ func New(ctx context.Context, config *config.DB) (*Repository, error) {
 			db:       db,
 			Category: postgres.NewCategoryRepository(db),
 			Budget:   postgres.NewBudgetRepository(db),
+			Expense:  postgres.NewExpenseRepository(db),
 		}
 	default:
 		return nil, errors.New("unknown type db")

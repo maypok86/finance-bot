@@ -15,6 +15,7 @@ require (
 	go.uber.org/zap v1.19.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v2 v2.4.0
+	gorm.io/datatypes v1.0.1 // indirect
 	gorm.io/driver/postgres v1.1.0
 	gorm.io/gorm v1.21.13
 )

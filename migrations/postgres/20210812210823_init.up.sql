@@ -13,7 +13,7 @@ CREATE TABLE categories (
 CREATE TABLE expenses (
     id serial PRIMARY KEY,
     amount integer NOT NULL,
-    created_date date NOT NULL DEFAULT CURRENT_DATE,
+    created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     category_codename varchar(255) NOT NULL,
     raw_text text NOT NULL,
     FOREIGN KEY (category_codename) REFERENCES categories(codename)

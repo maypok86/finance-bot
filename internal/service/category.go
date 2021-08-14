@@ -2,9 +2,10 @@ package service
 
 import (
 	"context"
+	"strings"
+
 	"github.com/LazyBearCT/finance-bot/internal/model"
 	"github.com/LazyBearCT/finance-bot/internal/repository"
-	"strings"
 )
 
 //go:generate mockgen -source=category.go -destination=mocks/mock_category.go

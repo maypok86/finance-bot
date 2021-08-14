@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmt"
+
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/pkg/errors"
@@ -36,7 +37,7 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) {
 	}
 
 	amounts := fmt.Sprintf("Добавлены траты %d руб на %s.\n\n", expense.Amount, expense.CategoryCodename)
-	msg := tgbotapi.NewMessage(id, amounts + b.getTodayStatistics(id))
+	msg := tgbotapi.NewMessage(id, amounts+b.getTodayStatistics(id))
 	b.send(msg)
 }
 

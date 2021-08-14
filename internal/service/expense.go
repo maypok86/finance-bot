@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	"github.com/LazyBearCT/finance-bot/internal/model"
 	"github.com/oriser/regroup"
@@ -15,7 +16,9 @@ import (
 type Expense interface {
 	GetAllToday() (int, error)
 	GetBaseToday() (int, error)
+	GetLastExpenses() ([]*model.Expense, error)
 	AddExpense(rawMessage string) (*model.Expense, error)
+	DeleteByID(id int) error
 }
 
 type expenseService struct {
@@ -48,8 +51,20 @@ func (es *expenseService) GetBaseToday() (int, error) {
 	return baseExpenses, err
 }
 
+func (es *expenseService) GetLastExpenses() ([]*model.Expense, error) {
+	expenses, err := es.repo.GetLastExpenses(es.ctx)
+	if err != nil {
+		return nil, err
+	}
+	return expenses, nil
+}
+
+func (es *expenseService) DeleteByID(id int) error {
+	return es.repo.DeleteExpenseByID(es.ctx, id)
+}
+
 type Message struct {
-	Amount int `regroup:"amount"`
+	Amount       int    `regroup:"amount"`
 	CategoryText string `regroup:"text"`
 }
 
@@ -67,16 +82,16 @@ func (es *expenseService) AddExpense(rawMessage string) (*model.Expense, error) 
 	}
 
 	expense, err := es.repo.CreateExpense(es.ctx, &model.Expense{
-		Amount: parsedMessage.Amount,
+		Amount:           parsedMessage.Amount,
 		CategoryCodename: category.Codename,
-		RawText: rawMessage,
+		RawText:          rawMessage,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	return &model.Expense{
-		Amount: expense.Amount,
+		Amount:           expense.Amount,
 		CategoryCodename: category.Name,
 	}, nil
 }

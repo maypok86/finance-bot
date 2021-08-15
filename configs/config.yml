@@ -1,0 +1,11 @@
+db:
+  type: postgres
+  host: postgres
+  port: 5432
+  name: finance_bot
+  user: lazybear
+  migrations_path: "file://migrations/postgres"
+
+logger:
+  level: info
+  file: develop.log

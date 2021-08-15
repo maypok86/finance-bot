@@ -1,0 +1,35 @@
+version: "3.3"
+services:
+  finance_bot:
+    container_name: ${CONTAINER_NAME}
+    image: ${REGISTRY}/${IMAGE_NAME}:${TAG}
+    build:
+      context: ..
+      dockerfile: ./deployments/finance_bot/Dockerfile
+    restart: always
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - ACCESS_ID=${ACCESS_ID}
+      - DB_PASSWORD=${DB_PASSWORD}
+    command: ["-config", "configs/config.yml"]
+    volumes:
+      - "../configs:/configs"
+      - "../migrations:/migrations"
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: bot_postgres
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: finance_bot
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

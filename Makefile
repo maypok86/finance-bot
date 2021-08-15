@@ -57,6 +57,14 @@ clean: ## Remove temporary files
 	rm -rf coverage.txt
 	rm -rf develop.log
 
+.PHONY: up
+up:
+	source ./scripts/env.sh && docker-compose -f ./deployments/docker-compose.yml up --build
+
+.PHONY: down
+down:
+	docker-compose -f ./deployments/docker-compose.yml down
+
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

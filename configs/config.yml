@@ -10,7 +10,7 @@ bot:
 
 db:
   type: postgres
-  host: localhost
+  host: postgres
   port: 5432
   name: finance_bot
   user: lazybear

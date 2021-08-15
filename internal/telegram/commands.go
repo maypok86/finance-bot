@@ -2,11 +2,12 @@ package telegram
 
 import (
 	"fmt"
-	"github.com/LazyBearCT/finance-bot/internal/times"
-	"github.com/pkg/errors"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/LazyBearCT/finance-bot/internal/times"
+	"github.com/pkg/errors"
 
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -14,7 +15,7 @@ import (
 
 var (
 	todayError = errors.New("Сегодня ещё нет расходов")
-	lastError = errors.New("Расходы ещё не заведены")
+	lastError  = errors.New("Расходы ещё не заведены")
 	monthError = errors.New("В этом месяце ещё нет расходов")
 )
 
@@ -23,8 +24,8 @@ const (
 	commandDelete     = "del"
 	commandCategories = "categories"
 	commandToday      = "today"
-	commandMonth = "month"
-	commandLast = "last"
+	commandMonth      = "month"
+	commandLast       = "last"
 	commandHelp       = "help"
 )
 
@@ -79,9 +80,9 @@ func (b *Bot) handleLastCommand(message *tgbotapi.Message) {
 	for _, expense := range expenses {
 		info := fmt.Sprintf("%d руб. на %s — нажми ", expense.Amount, expense.CategoryCodename)
 		del := fmt.Sprintf("/del%d для удаления", expense.ID)
-		lastExpenses = append(lastExpenses, info + del)
+		lastExpenses = append(lastExpenses, info+del)
 	}
-	msg := tgbotapi.NewMessage(id, "Последние сохранённые траты:\n\n* " + strings.Join(lastExpenses, "\n\n* "))
+	msg := tgbotapi.NewMessage(id, "Последние сохранённые траты:\n\n* "+strings.Join(lastExpenses, "\n\n* "))
 	b.send(msg)
 }
 
@@ -118,7 +119,7 @@ func (b *Bot) getStatisticsByPeriod(id int64, period times.Period) string {
 		text += "За текущий месяц: /month"
 	case times.Month:
 		text = "Расходы в текущем месяце:\n"
-		text += all + fmt.Sprintf("базовые — %d руб. из %d руб.", baseExpenses, time.Now().Day() * dailyLimit)
+		text += all + fmt.Sprintf("базовые — %d руб. из %d руб.", baseExpenses, time.Now().Day()*dailyLimit)
 	}
 	return text
 }
@@ -136,7 +137,7 @@ func (b *Bot) handleCategoriesCommand(message *tgbotapi.Message) {
 func (b *Bot) handleDeleteCommand(message *tgbotapi.Message) {
 	id := message.Chat.ID
 
-	rowID, err := strconv.Atoi(message.Text[len(commandDelete) + 1:])
+	rowID, err := strconv.Atoi(message.Text[len(commandDelete)+1:])
 	if err != nil {
 		b.handleError(id, err)
 		return

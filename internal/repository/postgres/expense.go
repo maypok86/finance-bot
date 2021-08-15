@@ -3,8 +3,9 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"github.com/LazyBearCT/finance-bot/internal/times"
 	"time"
+
+	"github.com/LazyBearCT/finance-bot/internal/times"
 
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	"github.com/LazyBearCT/finance-bot/internal/model"

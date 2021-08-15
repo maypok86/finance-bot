@@ -26,6 +26,7 @@ const (
 	commandToday      = "today"
 	commandMonth      = "month"
 	commandLast       = "last"
+	commandLimit = "limit"
 	commandHelp       = "help"
 )
 
@@ -49,7 +50,7 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) {
 		b.handleMonthCommand(message)
 	case commandLast:
 		b.handleLastCommand(message)
-	case "limit":
+	case commandLimit:
 		b.handleLimitCommand(message)
 	default:
 		b.handleUnknownCommand(message)
@@ -99,24 +100,31 @@ func (b *Bot) handleTodayCommand(message *tgbotapi.Message) {
 
 func (b *Bot) getStatisticsByPeriod(id int64, period times.Period) string {
 	allExpenses, err := b.manager.Expense.GetAllByPeriod(period)
+	var periodError error
+	switch period {
+	case times.Day:
+		periodError = todayError
+	case times.Month:
+		periodError = monthError
+	default:
+		panic("unknown period")
+	}
 	if err != nil {
-		b.handleError(id, todayError)
+		b.handleError(id, periodError)
 		return ""
 	}
 	baseExpenses, err := b.manager.Expense.GetBaseByPeriod(period)
 	if err != nil {
-		b.handleError(id, todayError)
+		b.handleError(id, periodError)
 		return ""
 	}
 	dailyLimit, err := b.manager.Budget.GetDailyLimitByName("base")
 	if err != nil {
-		b.handleError(id, todayError)
+		b.handleError(id, periodError)
 		return ""
 	}
 	var text string
 	all := fmt.Sprintf("всего — %d руб.\n", allExpenses)
-	text += fmt.Sprintf("базовые — %d руб. из %d руб.\n\n", baseExpenses, dailyLimit)
-	text += "За текущий месяц: /month"
 	switch period {
 	case times.Day:
 		text = "Расходы сегодня:\n"

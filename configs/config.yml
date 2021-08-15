@@ -1,13 +1,3 @@
-bot:
-  message:
-    response:
-      start: "Бот для учёта финансов\n\nДобавить расход: 250 такси\nСегодняшняя статистика: /today\nЗа текущий месяц: /month\nПоследние внесённые расходы: /expenses\nКатегории трат: /categories"
-      delete: "Удалил"
-      categories: "Категории трат:\n\n* "
-      unknown: "Я не знаю такой команды :("
-    error:
-      unknown: "Произошла неизвестная ошибка."
-
 db:
   type: postgres
   host: postgres

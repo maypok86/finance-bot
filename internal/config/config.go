@@ -17,32 +17,14 @@ type Logger struct {
 type Bot struct {
 	BotToken string `envconfig:"BOT_TOKEN" required:"true"`
 	AccessID int    `envconfig:"ACCESS_ID" required:"true"`
-
-	Message Message `yaml:"message"`
 }
 
 type DB struct {
-	Type           string `yaml:"type" env:"DB_TYPE"`
-	Host           string `yaml:"host" env:"DB_HOST"`
-	Port           string `yaml:"port" env:"DB_PORT"`
-	User           string `yaml:"user" env:"DB_USER"`
-	Name           string `yaml:"name" env:"DB_NAME"`
-	Password       string `env:"DB_PASSWORD" required:"true"`
-	MigrationsPath string `yaml:"migrations_path" env:"DB_MIGRATIONS_PATH"`
-}
-
-type Message struct {
-	Response Response `yaml:"response"`
-	Error    Error    `yaml:"error"`
-}
-
-type Response struct {
-	Start      string `yaml:"start"`
-	Delete     string `yaml:"delete"`
-	Categories string `yaml:"categories"`
-	Unknown    string `yaml:"unknown"`
-}
-
-type Error struct {
-	Unknown string `yaml:"unknown"`
+	Type           string `yaml:"type" envconfig:"DB_TYPE"`
+	Host           string `yaml:"host" envconfig:"DB_HOST"`
+	Port           string `yaml:"port" envconfig:"DB_PORT"`
+	User           string `yaml:"user" envconfig:"DB_USER"`
+	Name           string `yaml:"name" envconfig:"DB_NAME"`
+	Password       string `envconfig:"DB_PASSWORD" required:"true"`
+	MigrationsPath string `yaml:"migrations_path" envconfig:"DB_MIGRATIONS_PATH"`
 }

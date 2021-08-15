@@ -50,16 +50,21 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) {
 	case commandLast:
 		b.handleLastCommand(message)
 	case "limit":
-		limit, err := b.manager.Budget.GetDailyLimitByName("base")
-		if err != nil {
-			b.handleError(message.Chat.ID, err)
-			return
-		}
-		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("Базовый дневной бюджет: %d", limit))
-		b.send(msg)
+		b.handleLimitCommand(message)
 	default:
 		b.handleUnknownCommand(message)
 	}
+}
+
+func (b *Bot) handleLimitCommand(message *tgbotapi.Message) {
+	id := message.Chat.ID
+	limit, err := b.manager.Budget.GetDailyLimitByName("base")
+	if err != nil {
+		b.handleError(id, err)
+		return
+	}
+	msg := tgbotapi.NewMessage(id, fmt.Sprintf("Базовый дневной бюджет: %d", limit))
+	b.send(msg)
 }
 
 func (b *Bot) handleMonthCommand(message *tgbotapi.Message) {
@@ -130,7 +135,7 @@ func (b *Bot) handleCategoriesCommand(message *tgbotapi.Message) {
 	for _, c := range categories {
 		categoriesInfo = append(categoriesInfo, c.Name+" ("+strings.Join(c.Aliases, ", ")+")")
 	}
-	msg := tgbotapi.NewMessage(message.Chat.ID, b.config.Message.Response.Categories+strings.Join(categoriesInfo, "\n* "))
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Категории трат:\n\n* "+strings.Join(categoriesInfo, "\n* "))
 	b.send(msg)
 }
 
@@ -148,16 +153,20 @@ func (b *Bot) handleDeleteCommand(message *tgbotapi.Message) {
 		return
 	}
 
-	msg := tgbotapi.NewMessage(id, b.config.Message.Response.Delete)
+	msg := tgbotapi.NewMessage(id, "Удалил")
 	b.send(msg)
 }
 
 func (b *Bot) handleStartCommand(message *tgbotapi.Message) {
-	msg := tgbotapi.NewMessage(message.Chat.ID, b.config.Message.Response.Start)
+	start := "Бот для учёта финансов\n\n"
+	start += "Добавить расход: 250 такси\nСегодняшняя статистика: /today\n"
+	start += "За текущий месяц: /month\nПоследние внесённые расходы: /last\nКатегории трат: /categories\n"
+	start += "Базовый дневной бюджет: /limit"
+	msg := tgbotapi.NewMessage(message.Chat.ID, start)
 	b.send(msg)
 }
 
 func (b *Bot) handleUnknownCommand(message *tgbotapi.Message) {
-	msg := tgbotapi.NewMessage(message.Chat.ID, b.config.Message.Response.Unknown)
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Я не знаю такой команды :(")
 	b.send(msg)
 }

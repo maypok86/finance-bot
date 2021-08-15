@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build container image
-        run: TAG=$(echo $GITHUB_SHA | head -c7) docker-compose -f ./deployments/docker-compose.yml build
+        run: TAG=$(echo $GITHUB_SHA | head -c7) docker-compose -f deployments/docker-compose.yml build
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -64,11 +64,12 @@ jobs:
           ACCESS_ID: ${{ secrets.ACCESS_ID }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_USER: ${{ secrets.DB_USER }}
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
         with:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
           KEY: ${{ secrets.SSHKEY }}
-          envs: IMAGE_NAME,REGISTRY,GITHUB_SHA,CONTAINER_NAME,BOT_TOKEN,ACCESS_ID,DB_PASSWORD,DB_USER
+          envs: IMAGE_NAME,REGISTRY,GITHUB_SHA,CONTAINER_NAME,BOT_TOKEN,ACCESS_ID,DB_PASSWORD,DB_USER,DIGITALOCEAN_ACCESS_TOKEN
           script: |
             # Stop running container
             docker stop $(echo $CONTAINER_NAME) || true
@@ -84,6 +85,7 @@ jobs:
             export ACCESS_ID=$ACCESS_ID
             export DB_PASSWORD=$DB_PASSWORD
             export DB_USER=$DB_USER
+            export DIGITALOCEAN_ACCESS_TOKEN=$DIGITALOCEAN_ACCESS_TOKEN
             export TAG=$(echo $GITHUB_SHA | head -c7)
 
             # Untar project
@@ -94,5 +96,9 @@ jobs:
             mv build finance-bot
             cd finance-bot
 
+            # Login into Digital Ocean Registry
+            docker login -u $(echo $DIGITALOCEAN_ACCESS_TOKEN) -p $(echo $DIGITALOCEAN_ACCESS_TOKEN) $(echo $REGISTRY)
+            # Pull project image
+            docker pull $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
             # Run a new container from a new image
             docker-compose -f deployments/docker-compose.yml up -d

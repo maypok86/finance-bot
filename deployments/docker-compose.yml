@@ -1,7 +1,8 @@
 version: "3.3"
 services:
   finance_bot:
-    container_name: finance_bot
+    container_name: ${CONTAINER_NAME}
+    image: ${REGISTRY}/${IMAGE_NAME}:${TAG}
     build:
       context: ..
       dockerfile: ./deployments/finance_bot/Dockerfile

@@ -39,12 +39,15 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) {
 	}
 
 	amounts := fmt.Sprintf("Добавлены траты %d руб на %s.\n\n", expense.Amount, expense.CategoryCodename)
-	msg := tgbotapi.NewMessage(id, amounts+b.getStatisticsByPeriod(id, times.Day))
-	b.send(msg)
+	statistics, err := b.getStatisticsByPeriod(times.Day)
+	text := amounts
+	if err == nil {
+		text += statistics
+	}
+	b.send(id, text)
 }
 
 func (b *Bot) handleError(id int64, err error) {
 	logger.Error(err)
-	msg := tgbotapi.NewMessage(id, err.Error())
-	b.send(msg)
+	b.send(id, err.Error())
 }

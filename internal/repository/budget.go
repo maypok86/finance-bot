@@ -10,4 +10,5 @@ import (
 
 type Budget interface {
 	GetBudgetByCodename(ctx context.Context, name string) (*model.Budget, error)
+	GetBaseBudget(ctx context.Context) (*model.Budget, error)
 }

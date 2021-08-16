@@ -16,8 +16,8 @@ import (
 //go:generate mockgen -source=expense.go -destination=mocks/mock_expense.go
 
 type Expense interface {
-	GetAllByPeriod(period times.Period) (int, error)
-	GetBaseByPeriod(period times.Period) (int, error)
+	GetAllByPeriod(period times.Period) int
+	GetBaseByPeriod(period times.Period) int
 	GetLastExpenses() ([]*model.Expense, error)
 	AddExpense(rawMessage string) (*model.Expense, error)
 	DeleteByID(id int) error
@@ -37,28 +37,24 @@ func NewExpense(ctx context.Context, expenseRepo repository.Expense, category Ca
 	}
 }
 
-func (es *expenseService) GetAllByPeriod(period times.Period) (int, error) {
+func (es *expenseService) GetAllByPeriod(period times.Period) int {
 	allExpenses, err := es.repo.GetAllExpensesByPeriod(es.ctx, period)
 	if err != nil {
-		return 0, err
+		return 0
 	}
-	return allExpenses, nil
+	return allExpenses
 }
 
-func (es *expenseService) GetBaseByPeriod(period times.Period) (int, error) {
+func (es *expenseService) GetBaseByPeriod(period times.Period) int {
 	baseExpenses, err := es.repo.GetBaseExpensesByPeriod(es.ctx, period)
 	if err != nil {
-		return 0, err
+		return 0
 	}
-	return baseExpenses, nil
+	return baseExpenses
 }
 
 func (es *expenseService) GetLastExpenses() ([]*model.Expense, error) {
-	expenses, err := es.repo.GetLastExpenses(es.ctx)
-	if err != nil {
-		return nil, err
-	}
-	return expenses, nil
+	return es.repo.GetLastExpenses(es.ctx)
 }
 
 func (es *expenseService) DeleteByID(id int) error {

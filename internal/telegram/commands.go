@@ -14,9 +14,12 @@ import (
 )
 
 var (
-	todayError = errors.New("Сегодня ещё нет расходов")
-	lastError  = errors.New("Расходы ещё не заведены")
-	monthError = errors.New("В этом месяце ещё нет расходов")
+	lastError      = errors.New("Расходы ещё не заведены")
+	limitError     = errors.New("failed get daily limit")
+	todayError     = errors.New("Сегодня ещё нет расходов")
+	baseTodayError = errors.New("Сегодня ещё нет базовых расходов")
+	monthError     = errors.New("В этом месяце ещё нет расходов")
+	baseMonthError = errors.New("В этом месяце ещё нет базовых расходов")
 )
 
 const (
@@ -26,7 +29,7 @@ const (
 	commandToday      = "today"
 	commandMonth      = "month"
 	commandLast       = "last"
-	commandLimit = "limit"
+	commandLimit      = "limit"
 	commandHelp       = "help"
 )
 
@@ -59,19 +62,29 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) {
 
 func (b *Bot) handleLimitCommand(message *tgbotapi.Message) {
 	id := message.Chat.ID
-	limit, err := b.manager.Budget.GetDailyLimitByName("base")
+	limit, err := b.manager.Budget.GetBaseDailyLimit()
 	if err != nil {
-		b.handleError(id, err)
+		b.handleError(id, limitError)
 		return
 	}
-	msg := tgbotapi.NewMessage(id, fmt.Sprintf("Базовый дневной бюджет: %d", limit))
-	b.send(msg)
+	b.send(id, fmt.Sprintf("Базовый дневной бюджет: %d", limit))
+}
+
+func (b *Bot) handleTodayCommand(message *tgbotapi.Message) {
+	b.handleCommandByPeriod(message, times.Day)
 }
 
 func (b *Bot) handleMonthCommand(message *tgbotapi.Message) {
+	b.handleCommandByPeriod(message, times.Month)
+}
+
+func (b *Bot) handleCommandByPeriod(message *tgbotapi.Message, period times.Period) {
 	id := message.Chat.ID
-	msg := tgbotapi.NewMessage(id, b.getStatisticsByPeriod(id, times.Month))
-	b.send(msg)
+	text, err := b.getStatisticsByPeriod(period)
+	if err != nil {
+		b.handleError(id, err)
+	}
+	b.send(id, text)
 }
 
 func (b *Bot) handleLastCommand(message *tgbotapi.Message) {
@@ -88,18 +101,11 @@ func (b *Bot) handleLastCommand(message *tgbotapi.Message) {
 		del := fmt.Sprintf("/del%d для удаления", expense.ID)
 		lastExpenses = append(lastExpenses, info+del)
 	}
-	msg := tgbotapi.NewMessage(id, "Последние сохранённые траты:\n\n* "+strings.Join(lastExpenses, "\n\n* "))
-	b.send(msg)
+	b.send(id, "Последние сохранённые траты:\n\n* "+strings.Join(lastExpenses, "\n\n* "))
 }
 
-func (b *Bot) handleTodayCommand(message *tgbotapi.Message) {
-	id := message.Chat.ID
-	msg := tgbotapi.NewMessage(id, b.getStatisticsByPeriod(id, times.Day))
-	b.send(msg)
-}
-
-func (b *Bot) getStatisticsByPeriod(id int64, period times.Period) string {
-	allExpenses, err := b.manager.Expense.GetAllByPeriod(period)
+func (b *Bot) getStatisticsByPeriod(period times.Period) (string, error) {
+	allExpenses := b.manager.Expense.GetAllByPeriod(period)
 	var periodError error
 	switch period {
 	case times.Day:
@@ -109,19 +115,13 @@ func (b *Bot) getStatisticsByPeriod(id int64, period times.Period) string {
 	default:
 		panic("unknown period")
 	}
-	if err != nil {
-		b.handleError(id, periodError)
-		return ""
+	if allExpenses == 0 {
+		return "", periodError
 	}
-	baseExpenses, err := b.manager.Expense.GetBaseByPeriod(period)
+	baseExpenses := b.manager.Expense.GetBaseByPeriod(period)
+	dailyLimit, err := b.manager.Budget.GetBaseDailyLimit()
 	if err != nil {
-		b.handleError(id, periodError)
-		return ""
-	}
-	dailyLimit, err := b.manager.Budget.GetDailyLimitByName("base")
-	if err != nil {
-		b.handleError(id, periodError)
-		return ""
+		return "", limitError
 	}
 	var text string
 	all := fmt.Sprintf("всего — %d руб.\n", allExpenses)
@@ -134,7 +134,7 @@ func (b *Bot) getStatisticsByPeriod(id int64, period times.Period) string {
 		text = "Расходы в текущем месяце:\n"
 		text += all + fmt.Sprintf("базовые — %d руб. из %d руб.", baseExpenses, time.Now().Day()*dailyLimit)
 	}
-	return text
+	return text, nil
 }
 
 func (b *Bot) handleCategoriesCommand(message *tgbotapi.Message) {
@@ -143,8 +143,7 @@ func (b *Bot) handleCategoriesCommand(message *tgbotapi.Message) {
 	for _, c := range categories {
 		categoriesInfo = append(categoriesInfo, c.Name+" ("+strings.Join(c.Aliases, ", ")+")")
 	}
-	msg := tgbotapi.NewMessage(message.Chat.ID, "Категории трат:\n\n* "+strings.Join(categoriesInfo, "\n* "))
-	b.send(msg)
+	b.send(message.Chat.ID, "Категории трат:\n\n* "+strings.Join(categoriesInfo, "\n* "))
 }
 
 func (b *Bot) handleDeleteCommand(message *tgbotapi.Message) {
@@ -161,8 +160,7 @@ func (b *Bot) handleDeleteCommand(message *tgbotapi.Message) {
 		return
 	}
 
-	msg := tgbotapi.NewMessage(id, "Удалил")
-	b.send(msg)
+	b.send(id, "Удалил")
 }
 
 func (b *Bot) handleStartCommand(message *tgbotapi.Message) {
@@ -170,11 +168,9 @@ func (b *Bot) handleStartCommand(message *tgbotapi.Message) {
 	start += "Добавить расход: 250 такси\nСегодняшняя статистика: /today\n"
 	start += "За текущий месяц: /month\nПоследние внесённые расходы: /last\nКатегории трат: /categories\n"
 	start += "Базовый дневной бюджет: /limit"
-	msg := tgbotapi.NewMessage(message.Chat.ID, start)
-	b.send(msg)
+	b.send(message.Chat.ID, start)
 }
 
 func (b *Bot) handleUnknownCommand(message *tgbotapi.Message) {
-	msg := tgbotapi.NewMessage(message.Chat.ID, "Я не знаю такой команды :(")
-	b.send(msg)
+	b.send(message.Chat.ID, "Я не знаю такой команды :(")
 }

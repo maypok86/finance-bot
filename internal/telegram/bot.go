@@ -47,11 +47,11 @@ func (b *Bot) Start() error {
 	return nil
 }
 
-func (b *Bot) send(msg tgbotapi.MessageConfig) {
-	if msg.Text == "" {
+func (b *Bot) send(id int64, text string) {
+	if text == "" {
 		return
 	}
-	_, err := b.bot.Send(msg)
+	_, err := b.bot.Send(tgbotapi.NewMessage(id, text))
 	if err != nil {
 		logger.Error(err)
 	}

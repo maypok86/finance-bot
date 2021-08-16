@@ -10,6 +10,7 @@ import (
 
 type Budget interface {
 	GetDailyLimitByName(name string) (int, error)
+	GetBaseDailyLimit() (int, error)
 }
 
 type budgetService struct {
@@ -26,6 +27,14 @@ func NewBudget(ctx context.Context, repo repository.Budget) Budget {
 
 func (bs *budgetService) GetDailyLimitByName(name string) (int, error) {
 	budget, err := bs.repo.GetBudgetByCodename(bs.ctx, name)
+	if err != nil {
+		return 0, nil
+	}
+	return budget.DailyLimit, nil
+}
+
+func (bs *budgetService) GetBaseDailyLimit() (int, error) {
+	budget, err := bs.repo.GetBaseBudget(bs.ctx)
 	if err != nil {
 		return 0, nil
 	}

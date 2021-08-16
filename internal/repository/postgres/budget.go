@@ -24,3 +24,7 @@ func (bp *BudgetPostgres) GetBudgetByCodename(ctx context.Context, name string) 
 	}
 	return &budget, nil
 }
+
+func (bp *BudgetPostgres) GetBaseBudget(ctx context.Context) (*model.Budget, error) {
+	return bp.GetBudgetByCodename(ctx, "base")
+}

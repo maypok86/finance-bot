@@ -37,7 +37,16 @@ lint: ## Run all the linters
 test: ## Run all the tests
 	echo -n > coverage.txt
 	echo -n > develop.log
-	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverprofile=coverage.txt -v -race -timeout=30s ./...
+	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverprofile=coverage.txt -v -race ./...
+
+.PHONY: testup
+testup:
+	docker run --name test_postgres -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=test_bot -d postgres
+
+.PHONY: testdown
+testdown:
+	docker stop test_postgres
+	docker rm test_postgres
 
 .PHONY: cover
 cover: test ## Run all the tests and opens the coverage report

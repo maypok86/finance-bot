@@ -14,7 +14,7 @@ type Bot struct {
 	manager *service.Manager
 }
 
-// New telegram bot
+// New create a new Bot instance
 func New(c *config.Bot, manager *service.Manager) (*Bot, error) {
 	bot, err := tgbotapi.NewBotAPI(c.BotToken)
 	if err != nil {

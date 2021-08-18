@@ -10,6 +10,7 @@ import (
 
 //go:generate mockgen -source=category.go -destination=mocks/mock_category.go
 
+// Category service
 type Category interface {
 	GetAll() []*model.Category
 	GetByName(name string) *model.Category
@@ -21,6 +22,7 @@ type categoryService struct {
 	categories []*model.Category
 }
 
+// NewCategory creates a new Category instance
 func NewCategory(ctx context.Context, repo repository.Category) (Category, error) {
 	category := &categoryService{
 		ctx:  ctx,
@@ -50,10 +52,12 @@ func (cs *categoryService) loadCategories() error {
 	return nil
 }
 
+// GetAll returns all model.Category
 func (cs *categoryService) GetAll() []*model.Category {
 	return cs.categories
 }
 
+// GetByName returns model.Category by name
 func (cs *categoryService) GetByName(name string) *model.Category {
 	var foundedCategory *model.Category = nil
 	var otherCategory *model.Category = nil

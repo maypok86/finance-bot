@@ -7,12 +7,14 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Manager of services
 type Manager struct {
 	Category Category
 	Budget   Budget
 	Expense  Expense
 }
 
+// NewManager creates a new Manager instance
 func NewManager(ctx context.Context, repo *repository.Repository) (*Manager, error) {
 	if repo == nil {
 		return nil, errors.New("No repo provided")

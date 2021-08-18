@@ -6,6 +6,7 @@ require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/golang-migrate/migrate/v4 v4.14.1
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/oriser/regroup v0.0.0-20210730155327-fca8d7531263 // indirect
 	github.com/pkg/errors v0.9.1

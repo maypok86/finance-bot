@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/LazyBearCT/finance-bot/internal/times"
+	"github.com/LazyBearCT/finance-bot/pkg/times"
 
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	"github.com/LazyBearCT/finance-bot/internal/model"
@@ -15,6 +15,7 @@ import (
 
 //go:generate mockgen -source=expense.go -destination=mocks/mock_expense.go
 
+// Expense service
 type Expense interface {
 	GetAllByPeriod(period times.Period) int
 	GetBaseByPeriod(period times.Period) int
@@ -29,6 +30,7 @@ type expenseService struct {
 	category Category
 }
 
+// NewExpense creates a new instance of Expense
 func NewExpense(ctx context.Context, expenseRepo repository.Expense, category Category) Expense {
 	return &expenseService{
 		ctx:      ctx,
@@ -37,6 +39,7 @@ func NewExpense(ctx context.Context, expenseRepo repository.Expense, category Ca
 	}
 }
 
+// GetAllByPeriod returns all model.Expense instances by period
 func (es *expenseService) GetAllByPeriod(period times.Period) int {
 	allExpenses, err := es.repo.GetAllExpensesByPeriod(es.ctx, period)
 	if err != nil {
@@ -45,6 +48,7 @@ func (es *expenseService) GetAllByPeriod(period times.Period) int {
 	return allExpenses
 }
 
+// GetBaseByPeriod returns base model.Expense instances by period
 func (es *expenseService) GetBaseByPeriod(period times.Period) int {
 	baseExpenses, err := es.repo.GetBaseExpensesByPeriod(es.ctx, period)
 	if err != nil {
@@ -53,14 +57,17 @@ func (es *expenseService) GetBaseByPeriod(period times.Period) int {
 	return baseExpenses
 }
 
+// GetLastExpenses returns last model.Expense instances
 func (es *expenseService) GetLastExpenses() ([]*model.Expense, error) {
 	return es.repo.GetLastExpenses(es.ctx)
 }
 
+// DeleteByID deletes model.Expense instance by id
 func (es *expenseService) DeleteByID(id int) error {
 	return es.repo.DeleteExpenseByID(es.ctx, id)
 }
 
+// Message ...
 type Message struct {
 	Amount       int    `regroup:"amount"`
 	CategoryText string `regroup:"text"`
@@ -68,6 +75,7 @@ type Message struct {
 
 var re = regroup.MustCompile("(?P<amount>[\\d ]+) (?P<text>.*)")
 
+// AddExpense creates a new model.Expense instance
 func (es *expenseService) AddExpense(rawMessage string) (*model.Expense, error) {
 	parsedMessage, err := parseMessage(rawMessage)
 	if err != nil {

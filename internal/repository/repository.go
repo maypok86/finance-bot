@@ -8,11 +8,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Database ...
 type Database interface {
 	Connect() error
 	KeepAlive()
 }
 
+// Repository ...
 type Repository struct {
 	db       Database
 	Category Category
@@ -20,6 +22,7 @@ type Repository struct {
 	Expense  Expense
 }
 
+// New creates a new Repository instance
 func New(ctx context.Context, config *config.DB) (*Repository, error) {
 	r := new(Repository)
 	switch config.Type {

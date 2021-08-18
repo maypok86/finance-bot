@@ -6,7 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/LazyBearCT/finance-bot/internal/times"
+	"github.com/LazyBearCT/finance-bot/pkg/times"
+
 	"github.com/pkg/errors"
 
 	"github.com/LazyBearCT/finance-bot/internal/logger"
@@ -14,12 +15,10 @@ import (
 )
 
 var (
-	lastError      = errors.New("Расходы ещё не заведены")
-	limitError     = errors.New("failed get daily limit")
-	todayError     = errors.New("Сегодня ещё нет расходов")
-	baseTodayError = errors.New("Сегодня ещё нет базовых расходов")
-	monthError     = errors.New("В этом месяце ещё нет расходов")
-	baseMonthError = errors.New("В этом месяце ещё нет базовых расходов")
+	errLast  = errors.New("Расходы ещё не заведены")
+	errLimit = errors.New("failed get daily limit")
+	errToday = errors.New("Сегодня ещё нет расходов")
+	errMonth = errors.New("В этом месяце ещё нет расходов")
 )
 
 const (
@@ -64,7 +63,7 @@ func (b *Bot) handleLimitCommand(message *tgbotapi.Message) {
 	id := message.Chat.ID
 	limit, err := b.manager.Budget.GetBaseDailyLimit()
 	if err != nil {
-		b.handleError(id, limitError)
+		b.handleError(id, errLimit)
 		return
 	}
 	b.send(id, fmt.Sprintf("Базовый дневной бюджет: %d", limit))
@@ -92,7 +91,7 @@ func (b *Bot) handleLastCommand(message *tgbotapi.Message) {
 
 	expenses, err := b.manager.Expense.GetLastExpenses()
 	if err != nil {
-		b.handleError(id, lastError)
+		b.handleError(id, errLast)
 		return
 	}
 	lastExpenses := make([]string, 0, len(expenses))
@@ -109,9 +108,9 @@ func (b *Bot) getStatisticsByPeriod(period times.Period) (string, error) {
 	var periodError error
 	switch period {
 	case times.Day:
-		periodError = todayError
+		periodError = errToday
 	case times.Month:
-		periodError = monthError
+		periodError = errMonth
 	default:
 		panic("unknown period")
 	}
@@ -121,7 +120,7 @@ func (b *Bot) getStatisticsByPeriod(period times.Period) (string, error) {
 	baseExpenses := b.manager.Expense.GetBaseByPeriod(period)
 	dailyLimit, err := b.manager.Budget.GetBaseDailyLimit()
 	if err != nil {
-		return "", limitError
+		return "", errLimit
 	}
 	var text string
 	all := fmt.Sprintf("всего — %d руб.\n", allExpenses)

@@ -15,7 +15,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// App Telegram bot
+// App telegram bot
 type App struct {
 	bot *telegram.Bot
 }

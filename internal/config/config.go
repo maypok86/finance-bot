@@ -19,6 +19,7 @@ type Bot struct {
 	AccessID int    `envconfig:"ACCESS_ID" required:"true"`
 }
 
+// DB config
 type DB struct {
 	Type           string `yaml:"type" envconfig:"DB_TYPE"`
 	Host           string `yaml:"host" envconfig:"DB_HOST"`

@@ -9,14 +9,14 @@ type Config struct {
 
 // Logger config
 type Logger struct {
-	Level string `yaml:"level" env:"LOGGER_LEVEL"`
-	File  string `yaml:"file" env:"LOGGER_FILE"`
+	Level string `yaml:"level" envconfig:"LOGGER_LEVEL"`
+	File  string `yaml:"file" envconfig:"LOGGER_FILE"`
 }
 
 // Bot config
 type Bot struct {
-	BotToken string `envconfig:"BOT_TOKEN" required:"true"`
-	AccessID int    `envconfig:"ACCESS_ID" required:"true"`
+	BotToken string `envconfig:"BOT_TOKEN"`
+	AccessID int    `envconfig:"ACCESS_ID"`
 }
 
 // DB config
@@ -26,6 +26,6 @@ type DB struct {
 	Port           string `yaml:"port" envconfig:"DB_PORT"`
 	User           string `yaml:"user" envconfig:"DB_USER"`
 	Name           string `yaml:"name" envconfig:"DB_NAME"`
-	Password       string `envconfig:"DB_PASSWORD" required:"true"`
+	Password       string `yaml:"password" envconfig:"DB_PASSWORD"`
 	MigrationsPath string `yaml:"migrations_path" envconfig:"DB_MIGRATIONS_PATH"`
 }

@@ -1,0 +1,8 @@
+db:
+  type: postgres
+  host: localhost
+  port: 5432
+  name: test_bot
+  password: secret
+  user: root
+  migrations_path: "file://../../../migrations/postgres"

@@ -1,25 +1,25 @@
 package config
 
-// Config app
+// Config app.
 type Config struct {
 	Bot    *Bot    `yaml:"bot"`
 	Logger *Logger `yaml:"logger"`
 	DB     *DB     `yaml:"db"`
 }
 
-// Logger config
+// Logger config.
 type Logger struct {
 	Level string `yaml:"level" envconfig:"LOGGER_LEVEL"`
 	File  string `yaml:"file" envconfig:"LOGGER_FILE"`
 }
 
-// Bot config
+// Bot config.
 type Bot struct {
 	BotToken string `envconfig:"BOT_TOKEN"`
 	AccessID int    `envconfig:"ACCESS_ID"`
 }
 
-// DB config
+// DB config.
 type DB struct {
 	Type           string `yaml:"type" envconfig:"DB_TYPE"`
 	Host           string `yaml:"host" envconfig:"DB_HOST"`

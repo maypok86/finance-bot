@@ -6,21 +6,19 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/LazyBearCT/finance-bot/internal/service"
-
-	"github.com/LazyBearCT/finance-bot/internal/repository"
-
 	"github.com/LazyBearCT/finance-bot/internal/config"
+	"github.com/LazyBearCT/finance-bot/internal/repository"
+	"github.com/LazyBearCT/finance-bot/internal/service"
 	"github.com/LazyBearCT/finance-bot/internal/telegram"
 	"github.com/pkg/errors"
 )
 
-// App telegram bot
+// App telegram bot.
 type App struct {
 	bot *telegram.Bot
 }
 
-// New create new telegram bot app
+// New create new telegram bot app.
 func New(ctx context.Context, c *config.Config) (*App, error) {
 	repo, err := repository.New(ctx, c.DB)
 	if err != nil {
@@ -42,7 +40,7 @@ func New(ctx context.Context, c *config.Config) (*App, error) {
 	}, nil
 }
 
-// Start telegram bot app
+// Start telegram bot app.
 func (a *App) Start() error {
 	eChan := make(chan error)
 	quit := make(chan os.Signal, 1)

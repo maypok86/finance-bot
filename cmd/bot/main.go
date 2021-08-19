@@ -10,9 +10,7 @@ import (
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 )
 
-var (
-	configPath string
-)
+var configPath string
 
 func init() {
 	flag.StringVar(&configPath, "config", "configs/config.yml", "Path to configuration file")
@@ -26,8 +24,7 @@ func main() {
 		return
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
 
 	if err := run(ctx); err != nil {
 		log.Fatal(err)

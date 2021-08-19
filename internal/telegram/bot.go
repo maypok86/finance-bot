@@ -7,14 +7,14 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-// Bot telegram
+// Bot telegram.
 type Bot struct {
 	bot     *tgbotapi.BotAPI
 	config  *config.Bot
 	manager *service.Manager
 }
 
-// New create a new Bot instance
+// New create a new Bot instance.
 func New(c *config.Bot, manager *service.Manager) (*Bot, error) {
 	bot, err := tgbotapi.NewBotAPI(c.BotToken)
 	if err != nil {
@@ -30,7 +30,7 @@ func New(c *config.Bot, manager *service.Manager) (*Bot, error) {
 	}, nil
 }
 
-// Start telegram bot
+// Start telegram bot.
 func (b *Bot) Start() error {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
@@ -40,11 +40,7 @@ func (b *Bot) Start() error {
 		return err
 	}
 
-	if err := b.handleUpdates(updates); err != nil {
-		return err
-	}
-
-	return nil
+	return b.handleUpdates(updates)
 }
 
 func (b *Bot) send(id int64, text string) {

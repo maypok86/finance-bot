@@ -3,14 +3,12 @@ package service
 import (
 	"context"
 
-	"github.com/LazyBearCT/finance-bot/pkg/times"
-
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	"github.com/LazyBearCT/finance-bot/internal/model"
+	"github.com/LazyBearCT/finance-bot/internal/repository"
+	"github.com/LazyBearCT/finance-bot/pkg/times"
 	"github.com/oriser/regroup"
 	"github.com/pkg/errors"
-
-	"github.com/LazyBearCT/finance-bot/internal/repository"
 )
 
 //go:generate mockgen -source=expense.go -destination=mocks/mock_expense.go

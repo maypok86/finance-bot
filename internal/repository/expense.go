@@ -3,14 +3,13 @@ package repository
 import (
 	"context"
 
-	"github.com/LazyBearCT/finance-bot/pkg/times"
-
 	"github.com/LazyBearCT/finance-bot/internal/model"
+	"github.com/LazyBearCT/finance-bot/pkg/times"
 )
 
 //go:generate mockgen -source=expense.go -destination=mocks/mock_expense.go
 
-// Expense repository
+// Expense repository.
 type Expense interface {
 	GetAllExpensesByPeriod(ctx context.Context, period times.Period) (int, error)
 	GetBaseExpensesByPeriod(ctx context.Context, period times.Period) (int, error)

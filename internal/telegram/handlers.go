@@ -3,9 +3,8 @@ package telegram
 import (
 	"fmt"
 
-	"github.com/LazyBearCT/finance-bot/pkg/times"
-
 	"github.com/LazyBearCT/finance-bot/internal/logger"
+	"github.com/LazyBearCT/finance-bot/pkg/times"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/pkg/errors"
 )

@@ -7,12 +7,12 @@ import (
 	"gorm.io/gorm"
 )
 
-// CategoryPostgres repository
+// CategoryPostgres repository.
 type CategoryPostgres struct {
 	db *gorm.DB
 }
 
-// NewCategoryRepository creates a new CategoryPostgres instance
+// NewCategoryRepository creates a new CategoryPostgres instance.
 func NewCategoryRepository(db *DB) *CategoryPostgres {
 	return &CategoryPostgres{
 		db: db.db,

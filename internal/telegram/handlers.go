@@ -11,18 +11,19 @@ import (
 
 func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 	for update := range updates {
-		if update.Message == nil { // ignore any non-Message Updates
+		message := update.Message
+		if message == nil { // ignore any non-Message Updates
 			continue
 		}
-		if update.Message.From.ID != b.config.AccessID {
+		if message.From.ID != b.config.AccessID {
 			return errors.New("wrong id")
 		}
 
-		if update.Message.IsCommand() {
-			b.handleCommand(update.Message)
+		if message.IsCommand() {
+			b.handleCommand(message)
 			continue
 		}
-		b.handleMessage(update.Message)
+		b.handleMessage(message)
 	}
 	return nil
 }

@@ -95,7 +95,7 @@ func (b *Bot) handleLastCommand(message *tgbotapi.Message) {
 	lastExpenses := make([]string, 0, len(expenses))
 	for _, expense := range expenses {
 		info := fmt.Sprintf("%d руб. на %s — нажми ", expense.Amount, expense.CategoryCodename)
-		del := fmt.Sprintf("/del%d для удаления", expense.ID)
+		del := fmt.Sprintf("/%s%d для удаления", commandDelete, expense.ID)
 		lastExpenses = append(lastExpenses, info+del)
 	}
 	b.send(id, "Последние сохранённые траты:\n\n* "+strings.Join(lastExpenses, "\n\n* "))
@@ -126,7 +126,7 @@ func (b *Bot) getStatisticsByPeriod(period times.Period) (string, error) {
 	case times.Day:
 		text = "Расходы сегодня:\n"
 		text += all + fmt.Sprintf("базовые — %d руб. из %d руб.\n\n", baseExpenses, dailyLimit)
-		text += "За текущий месяц: /month"
+		text += fmt.Sprintf("За текущий месяц: /%s", commandMonth)
 	case times.Month:
 		text = "Расходы в текущем месяце:\n"
 		text += all + fmt.Sprintf("базовые — %d руб. из %d руб.", baseExpenses, time.Now().Day()*dailyLimit)
@@ -162,9 +162,9 @@ func (b *Bot) handleDeleteCommand(message *tgbotapi.Message) {
 
 func (b *Bot) handleStartCommand(message *tgbotapi.Message) {
 	start := "Бот для учёта финансов\n\n"
-	start += "Добавить расход: 250 такси\nСегодняшняя статистика: /today\n"
-	start += "За текущий месяц: /month\nПоследние внесённые расходы: /last\nКатегории трат: /categories\n"
-	start += "Базовый дневной бюджет: /limit"
+	start += fmt.Sprintf("Добавить расход: 250 такси\nСегодняшняя статистика: /%s\n", commandToday)
+	start += fmt.Sprintf("За текущий месяц: /%s\nПоследние внесённые расходы: /%s\n", commandMonth, commandLast)
+	start += fmt.Sprintf("Категории трат: /%s\nБазовый дневной бюджет: /%s", commandCategories, commandLimit)
 	b.send(message.Chat.ID, start)
 }
 

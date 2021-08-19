@@ -34,12 +34,11 @@ func (m *MockBudget) EXPECT() *MockBudgetMockRecorder {
 }
 
 // GetBaseDailyLimit mocks base method.
-func (m *MockBudget) GetBaseDailyLimit() (int, error) {
+func (m *MockBudget) GetBaseDailyLimit() int {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBaseDailyLimit")
 	ret0, _ := ret[0].(int)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // GetBaseDailyLimit indicates an expected call of GetBaseDailyLimit.
@@ -49,12 +48,11 @@ func (mr *MockBudgetMockRecorder) GetBaseDailyLimit() *gomock.Call {
 }
 
 // GetDailyLimitByName mocks base method.
-func (m *MockBudget) GetDailyLimitByName(name string) (int, error) {
+func (m *MockBudget) GetDailyLimitByName(name string) int {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetDailyLimitByName", name)
 	ret0, _ := ret[0].(int)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // GetDailyLimitByName indicates an expected call of GetDailyLimitByName.

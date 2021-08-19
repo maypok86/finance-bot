@@ -14,7 +14,6 @@ import (
 
 var (
 	errLast  = errors.New("Расходы ещё не заведены")
-	errLimit = errors.New("failed get daily limit")
 	errToday = errors.New("Сегодня ещё нет расходов")
 	errMonth = errors.New("В этом месяце ещё нет расходов")
 )
@@ -59,11 +58,7 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) {
 
 func (b *Bot) handleLimitCommand(message *tgbotapi.Message) {
 	id := message.Chat.ID
-	limit, err := b.manager.Budget.GetBaseDailyLimit()
-	if err != nil {
-		b.handleError(id, errLimit)
-		return
-	}
+	limit := b.manager.Budget.GetBaseDailyLimit()
 	b.send(id, fmt.Sprintf("Базовый дневной бюджет: %d", limit))
 }
 
@@ -116,10 +111,7 @@ func (b *Bot) getStatisticsByPeriod(period times.Period) (string, error) {
 		return "", periodError
 	}
 	baseExpenses := b.manager.Expense.GetBaseByPeriod(period)
-	dailyLimit, err := b.manager.Budget.GetBaseDailyLimit()
-	if err != nil {
-		return "", errLimit
-	}
+	dailyLimit := b.manager.Budget.GetBaseDailyLimit()
 	var text string
 	all := fmt.Sprintf("всего — %d руб.\n", allExpenses)
 	switch period {

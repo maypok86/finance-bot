@@ -24,9 +24,9 @@ func Int() int {
 // String generates a random string of length n.
 func String(size int) string {
 	var sb strings.Builder
-	r, _ := rand.Int(rand.Reader, big.NewInt(int64(len(alphabet))))
 
 	for i := 0; i < size; i++ {
+		r, _ := rand.Int(rand.Reader, big.NewInt(int64(len(alphabet))))
 		c := alphabet[r.Int64()]
 		sb.WriteByte(c)
 	}

@@ -9,7 +9,6 @@ LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%d
 .PHONY: setup
 setup: ## Install all the build and lint dependencies
 	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.37.0
-	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 	go get golang.org/x/tools/cmd/goimports
 
 .PHONY: build

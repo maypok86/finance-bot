@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strings"
 
 	"github.com/LazyBearCT/finance-bot/internal/logger"
 	"github.com/LazyBearCT/finance-bot/internal/model"
@@ -100,12 +101,12 @@ func (es *expenseService) AddExpense(rawMessage string) (*model.Expense, error) 
 	}, nil
 }
 
-func parseMessage(rawMessage string) (Message, error) {
-	var message Message
+func parseMessage(rawMessage string) (message Message, err error) {
 	if err := re.MatchToTarget(rawMessage, &message); err != nil {
 		logger.Error(message)
-		return Message{}, errors.New("Не могу понять сообщение. Напишите сообщение в формате, например:\n1500 метро")
+		return message, errors.New("Не могу понять сообщение. Напишите сообщение в формате, например:\n1500 метро")
 	}
+	message.CategoryText = strings.ToLower(strings.TrimSpace(message.CategoryText))
 	logger.Info(message)
-	return message, nil
+	return
 }

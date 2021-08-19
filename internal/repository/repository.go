@@ -22,9 +22,9 @@ type Repository struct {
 	Expense  Expense
 }
 
-// New creates a new Repository instance
+// New creates a new Repository instance.
 func New(ctx context.Context, config *config.DB) (*Repository, error) {
-	r := new(Repository)
+	var r *Repository
 	switch config.Type {
 	case "postgres":
 		db, err := postgres.New(ctx, config)

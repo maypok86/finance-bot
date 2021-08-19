@@ -8,7 +8,7 @@ import (
 
 //go:generate mockgen -source=budget.go -destination=mocks/mock_budget.go
 
-// Budget service
+// Budget service.
 type Budget interface {
 	GetDailyLimitByName(name string) (int, error)
 	GetBaseDailyLimit() (int, error)
@@ -19,7 +19,7 @@ type budgetService struct {
 	repo repository.Budget
 }
 
-// NewBudget creates a new Budget instance
+// NewBudget creates a new Budget instance.
 func NewBudget(ctx context.Context, repo repository.Budget) Budget {
 	return &budgetService{
 		ctx:  ctx,
@@ -27,7 +27,7 @@ func NewBudget(ctx context.Context, repo repository.Budget) Budget {
 	}
 }
 
-// GetDailyLimitByName returns a daily limit by name
+// GetDailyLimitByName returns a daily limit by name.
 func (bs *budgetService) GetDailyLimitByName(name string) (int, error) {
 	budget, err := bs.repo.GetBudgetByCodename(bs.ctx, name)
 	if err != nil {
@@ -36,7 +36,7 @@ func (bs *budgetService) GetDailyLimitByName(name string) (int, error) {
 	return budget.DailyLimit, nil
 }
 
-// GetBaseDailyLimit returns a base daily limit
+// GetBaseDailyLimit returns a base daily limit.
 func (bs *budgetService) GetBaseDailyLimit() (int, error) {
 	budget, err := bs.repo.GetBaseBudget(bs.ctx)
 	if err != nil {

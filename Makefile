@@ -27,8 +27,7 @@ version: build ## Build and view project version
 
 .PHONY: fmt
 fmt: ## Run gci on all go files
-	find . -name '*.go' -not -wholename './vendor/*' | while read -r file; do gci -w "$$file"; done
-	find . -name '*.go' -not -wholename './vendor/*' | while read -r file; do gofumpt -w "$$file"; done
+	find . -name '*.go' -not -wholename './vendor/*' | while read -r file; do gci -w "$$file" && gofumpt -w "$$file"; done
 
 .PHONY: lint
 lint: ## Run all the linters

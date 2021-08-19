@@ -2,8 +2,10 @@ package postgres
 
 import (
 	"github.com/golang-migrate/migrate/v4"
+
 	// migrate postgres
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+
 	// migrate file
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/pkg/errors"

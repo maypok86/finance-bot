@@ -1,11 +1,11 @@
 package times
 
-// Period int
+// Period int.
 type Period int
 
 const (
-	// Day is a Period instance
+	// Day is a Period instance.
 	Day Period = iota
-	// Month is a Period instance
+	// Month is a Period instance.
 	Month
 )

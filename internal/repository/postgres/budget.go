@@ -7,19 +7,19 @@ import (
 	"gorm.io/gorm"
 )
 
-// BudgetPostgres repository
+// BudgetPostgres repository.
 type BudgetPostgres struct {
 	db *gorm.DB
 }
 
-// NewBudgetRepository creates a new BudgetPostgres instance
+// NewBudgetRepository creates a new BudgetPostgres instance.
 func NewBudgetRepository(db *DB) *BudgetPostgres {
 	return &BudgetPostgres{
 		db: db.db,
 	}
 }
 
-// GetBudgetByCodename returns model.Budget by codename
+// GetBudgetByCodename returns model.Budget by codename.
 func (bp *BudgetPostgres) GetBudgetByCodename(ctx context.Context, name string) (*model.Budget, error) {
 	var budget model.Budget
 	if err := bp.db.Where("codename = ?", name).Take(&budget).Error; err != nil {
@@ -28,7 +28,7 @@ func (bp *BudgetPostgres) GetBudgetByCodename(ctx context.Context, name string) 
 	return &budget, nil
 }
 
-// GetBaseBudget returns base model.Budget
+// GetBaseBudget returns base model.Budget.
 func (bp *BudgetPostgres) GetBaseBudget(ctx context.Context) (*model.Budget, error) {
 	return bp.GetBudgetByCodename(ctx, "base")
 }

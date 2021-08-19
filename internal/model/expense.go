@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// Expense model
+// Expense model.
 type Expense struct {
 	ID               int       `json:"id"`
 	Amount           int       `json:"amount"`
@@ -13,7 +13,7 @@ type Expense struct {
 	RawText          string    `json:"raw_text"`
 }
 
-// TableName returns a Expense table name
+// TableName returns a Expense table name.
 func (e *Expense) TableName() string {
 	return "expenses"
 }

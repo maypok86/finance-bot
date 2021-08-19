@@ -11,14 +11,14 @@ import (
 	"gorm.io/gorm"
 )
 
-// DB Postgres
+// DB Postgres.
 type DB struct {
 	ctx context.Context
 	dsn string
 	db  *gorm.DB
 }
 
-// New creates a new DB instance
+// New creates a new DB instance.
 func New(ctx context.Context, config *config.DB) (*DB, error) {
 	db := &DB{
 		ctx: ctx,
@@ -29,14 +29,15 @@ func New(ctx context.Context, config *config.DB) (*DB, error) {
 	if err := db.Connect(); err != nil {
 		return nil, err
 	}
-	dsn := fmt.Sprintf("postgres://%s:%s/%s?sslmode=disable&user=%s&password=%s", config.Host, config.Port, config.Name, config.User, config.Password)
+	dsn := fmt.Sprintf("postgres://%s:%s/%s?sslmode=disable&user=%s&password=%s",
+		config.Host, config.Port, config.Name, config.User, config.Password)
 	if err := runMigrations(config.MigrationsPath, dsn); err != nil {
 		return nil, err
 	}
 	return db, nil
 }
 
-// Connect to DB
+// Connect to DB.
 func (db *DB) Connect() (err error) {
 	db.db, err = gorm.Open(postgres.Open(db.dsn), new(gorm.Config))
 	return

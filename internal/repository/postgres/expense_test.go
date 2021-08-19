@@ -22,6 +22,7 @@ func getRandomCategoryCodename() string {
 }
 
 func containsExpense(t *testing.T, expected []*model.Expense, actual *model.Expense) bool {
+	t.Helper()
 	for _, expense := range expected {
 		if expense.ID == actual.ID {
 			require.Equal(t, expense.ID, actual.ID)
@@ -33,6 +34,7 @@ func containsExpense(t *testing.T, expected []*model.Expense, actual *model.Expe
 }
 
 func createRandomExpense(t *testing.T, e *ExpensePostgres) *model.Expense {
+	t.Helper()
 	expected := &model.Expense{
 		ID:               random.Int(),
 		Amount:           random.Int(),
@@ -55,10 +57,12 @@ func createRandomExpense(t *testing.T, e *ExpensePostgres) *model.Expense {
 }
 
 func truncate(t *testing.T, repo *ExpensePostgres) {
+	t.Helper()
 	require.NoError(t, repo.db.Exec("TRUNCATE TABLE expenses").Error)
 }
 
 func createRandomExpenses(t *testing.T, e *ExpensePostgres, count int) []*model.Expense {
+	t.Helper()
 	expenses := make([]*model.Expense, 0, count)
 	for i := 0; i < count; i++ {
 		expenses = append(expenses, createRandomExpense(t, e))
@@ -114,21 +118,22 @@ func getByPeriod(date time.Time, t time.Time, period times.Period) bool {
 	return false
 }
 
-func getSliceByPeriod(test *testing.T, repo *ExpensePostgres, period times.Period, count int) []*model.Expense {
-	var t time.Time
+func getSliceByPeriod(t *testing.T, repo *ExpensePostgres, period times.Period, count int) []*model.Expense {
+	t.Helper()
+	var condTime time.Time
 	x := time.Now()
 	switch period {
 	case times.Day:
-		t = time.Date(x.Year(), x.Month(), x.Day(), 0, 0, 0, 0, time.UTC)
+		condTime = time.Date(x.Year(), x.Month(), x.Day(), 0, 0, 0, 0, time.UTC)
 	case times.Month:
-		t = time.Date(x.Year(), x.Month(), 1, 0, 0, 0, 0, time.UTC)
+		condTime = time.Date(x.Year(), x.Month(), 1, 0, 0, 0, 0, time.UTC)
 	default:
 		panic("unknown period")
 	}
-	expenses := createRandomExpenses(test, repo, count)
+	expenses := createRandomExpenses(t, repo, count)
 	ans := make([]*model.Expense, 0, len(expenses))
 	for _, expense := range expenses {
-		if getByPeriod(date(expense.CreatedAt), t, period) {
+		if getByPeriod(date(expense.CreatedAt), condTime, period) {
 			ans = append(ans, expense)
 		}
 	}
@@ -143,14 +148,15 @@ func sumAmount(expenses []*model.Expense) int {
 	return sum
 }
 
-func getAllExpensesByPeriod(test *testing.T, period times.Period) {
+func getAllExpensesByPeriod(t *testing.T, period times.Period) {
+	t.Helper()
 	repo := NewExpenseRepository(db)
-	expenses := getSliceByPeriod(test, repo, period, countExpenses)
+	expenses := getSliceByPeriod(t, repo, period, countExpenses)
 	expected := sumAmount(expenses)
 
 	actual, _ := repo.GetAllExpensesByPeriod(context.Background(), period)
-	require.Equal(test, expected, actual)
-	truncate(test, repo)
+	require.Equal(t, expected, actual)
+	truncate(t, repo)
 }
 
 func TestGetAllExpensesByPeriod(t *testing.T) {
@@ -172,6 +178,7 @@ func containsCodename(expense *model.Expense) bool {
 }
 
 func getBaseExpensesByPeriod(t *testing.T, period times.Period) {
+	t.Helper()
 	repo := NewExpenseRepository(db)
 	sliceExpenses := getSliceByPeriod(t, repo, period, countExpenses)
 	expenses := make([]*model.Expense, 0, len(sliceExpenses))

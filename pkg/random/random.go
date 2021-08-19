@@ -1,21 +1,19 @@
 package random
 
 import (
+	"crypto/rand"
 	"math"
-	"math/rand"
+	"math/big"
 	"strings"
 	"time"
 )
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
 // IntByRange generates a random integer between min and max.
 func IntByRange(min, max int64) int64 {
-	return min + rand.Int63n(max-min+1)
+	r, _ := rand.Int(rand.Reader, big.NewInt(max-min+1))
+	return min + r.Int64()
 }
 
 // Int generates a random integer between 1 and math.MaxInt32.
@@ -26,10 +24,10 @@ func Int() int {
 // String generates a random string of length n.
 func String(size int) string {
 	var sb strings.Builder
-	k := len(alphabet)
+	r, _ := rand.Int(rand.Reader, big.NewInt(int64(len(alphabet))))
 
 	for i := 0; i < size; i++ {
-		c := alphabet[rand.Intn(k)]
+		c := alphabet[r.Int64()]
 		sb.WriteByte(c)
 	}
 

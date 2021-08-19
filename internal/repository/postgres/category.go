@@ -19,7 +19,7 @@ func NewCategoryRepository(db *DB) *CategoryPostgres {
 	}
 }
 
-// GetAllCategories returns all model.DBCategory
+// GetAllCategories returns all model.DBCategory.
 func (c *CategoryPostgres) GetAllCategories(ctx context.Context) ([]*model.DBCategory, error) {
 	var categories []*model.DBCategory
 	if err := c.db.Find(&categories).Error; err != nil {

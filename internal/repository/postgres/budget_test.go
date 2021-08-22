@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/LazyBearCT/finance-bot/internal/model"
-	"github.com/LazyBearCT/finance-bot/pkg/random"
 	"github.com/stretchr/testify/require"
+	"gitlab.com/LazyBearCT/finance-bot/internal/model"
+	"gitlab.com/LazyBearCT/finance-bot/pkg/random"
 )
 
 func createRandomBudget() *model.Budget {

@@ -1,10 +1,10 @@
 package telegram
 
 import (
-	"github.com/LazyBearCT/finance-bot/internal/config"
-	"github.com/LazyBearCT/finance-bot/internal/logger"
-	"github.com/LazyBearCT/finance-bot/internal/service"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"gitlab.com/LazyBearCT/finance-bot/internal/config"
+	"gitlab.com/LazyBearCT/finance-bot/internal/logger"
+	"gitlab.com/LazyBearCT/finance-bot/internal/service"
 )
 
 // Bot telegram.

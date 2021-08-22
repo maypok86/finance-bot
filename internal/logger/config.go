@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/LazyBearCT/finance-bot/internal/config"
+	"gitlab.com/LazyBearCT/finance-bot/internal/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"

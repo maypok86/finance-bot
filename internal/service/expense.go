@@ -4,12 +4,12 @@ import (
 	"context"
 	"strings"
 
-	"github.com/LazyBearCT/finance-bot/internal/logger"
-	"github.com/LazyBearCT/finance-bot/internal/model"
-	"github.com/LazyBearCT/finance-bot/internal/repository"
-	"github.com/LazyBearCT/finance-bot/pkg/times"
 	"github.com/oriser/regroup"
 	"github.com/pkg/errors"
+	"gitlab.com/LazyBearCT/finance-bot/internal/logger"
+	"gitlab.com/LazyBearCT/finance-bot/internal/model"
+	"gitlab.com/LazyBearCT/finance-bot/internal/repository"
+	"gitlab.com/LazyBearCT/finance-bot/pkg/times"
 )
 
 //go:generate mockgen -source=expense.go -destination=mocks/mock_expense.go

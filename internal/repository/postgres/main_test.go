@@ -16,11 +16,12 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	c, err := config.Parse("../../../configs/test.yml")
-	if err != nil {
+	c := new(config.Config)
+	if err := c.ParseFile("../../../configs/test.yml"); err != nil {
 		log.Fatal("cannot load config:", err)
 	}
 
+	var err error
 	db, err = New(context.Background(), c.DB)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)

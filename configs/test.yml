@@ -1,6 +1,6 @@
 db:
   type: postgres
-  host: localhost
+  host: postgres
   port: 5432
   name: test_bot
   password: secret

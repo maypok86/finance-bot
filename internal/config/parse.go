@@ -13,7 +13,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func (c *Config) parseFile(path string) error {
+// ParseFile parse config file.
+func (c *Config) ParseFile(path string) error {
 	file, err := os.Open(path)
 	if err != nil {
 		return errors.Wrap(err, "[configFile.Open] failed")
@@ -46,7 +47,7 @@ func (c *Config) parseEnvVars() error {
 // Parse config file and env vars.
 func Parse(configPath string) (*Config, error) {
 	c := new(Config)
-	if err := c.parseFile(configPath); err != nil {
+	if err := c.ParseFile(configPath); err != nil {
 		return nil, errors.Wrap(err, "parse config file failed")
 	}
 	if err := c.parseEnvVars(); err != nil {

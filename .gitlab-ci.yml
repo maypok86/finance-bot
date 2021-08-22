@@ -1,0 +1,88 @@
+image: golang:latest
+
+variables:
+  REPO_NAME: gitlab.com/LazyBearCT/finance-bot
+  REGISTRY: registry.digitalocean.com/lazybear
+  IMAGE_NAME: finance-bot
+  CONTAINER_NAME: finance-bot
+  TAG_LATEST: $REGISTRY/$IMAGE_NAME:latest
+  TAG_COMMIT: $REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  DOCKER_TLS_CERTDIR: ""
+
+before_script:
+  - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
+  - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+  - cd $GOPATH/src/$REPO_NAME
+
+stages:
+  - test
+  - publish
+  - deploy
+
+test:
+  stage: test
+  services:
+    - postgres
+  variables:
+    POSTGRES_USER: root
+    POSTGRES_PASSWORD: secret
+    POSTGRES_DB: test_bot
+  before_script:
+    - make setup
+  script:
+    - make fmt
+    - make lint
+    - make test
+
+publish:
+  image: docker:latest
+  stage: publish
+  services:
+    - docker:dind
+  before_script:
+    - apk update
+    - apk upgrade
+    - apk add doctl --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
+    - apk add py-pip python3-dev libffi-dev openssl-dev gcc libc-dev make
+    - pip install docker-compose
+  script:
+    - doctl auth init --access-token $DIGITALOCEAN_ACCESS_TOKEN
+    - doctl registry login --expiry-seconds 600
+
+    - TAG=$CI_COMMIT_SHORT_SHA docker-compose -f deployments/docker-compose.yml build
+    - TAG=latest docker-compose -f deployments/docker-compose.yml build
+
+    - docker push $TAG_LATEST
+    - docker push $TAG_COMMIT
+  only:
+    - release
+
+deploy:
+  image: ubuntu:latest
+  stage: deploy
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
+    - eval $(ssh-agent -s)
+    - echo "$ID_RSA" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $SERVER_IP >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - echo "TAG=$CI_COMMIT_SHORT_SHA\nREGISTRY=$REGISTRY\nIMAGE_NAME=$IMAGE_NAME\nCONTAINER_NAME=$CONTAINER_NAME" > .env
+    - echo "BOT_TOKEN=$BOT_TOKEN\nACCESS_ID=$ACCESS_ID\nDB_PASSWORD=$DB_PASSWORD\nDB_USER=$DB_USER\n" >> .env
+
+  script:
+    - ssh $SERVER_USER@$SERVER_IP "rm -rf ~/projects/finance-bot"
+    - scp -r $(pwd) $SERVER_USER@$SERVER_IP:~/projects/finance-bot/
+
+    - ssh $SERVER_USER@$SERVER_IP "docker stop $CONTAINER_NAME || true"
+    - ssh $SERVER_USER@$SERVER_IP "docker rm $CONTAINER_NAME || true"
+    - ssh $SERVER_USER@$SERVER_IP "docker login -u $DIGITALOCEAN_ACCESS_TOKEN -p $DIGITALOCEAN_ACCESS_TOKEN $REGISTRY"
+    - ssh $SERVER_USER@$SERVER_IP "docker pull $TAG_COMMIT"
+    - ssh $SERVER_USER@$SERVER_IP "cd ~/projects/finance-bot; source .env && docker-compose -f deployments/docker-compose.yml up -d; rm -rf .env"
+  environment:
+    name: production
+    url: http://$SERVER_IP
+  only:
+    - release

@@ -3,7 +3,7 @@ package postgres
 import (
 	"context"
 
-	"github.com/LazyBearCT/finance-bot/internal/model"
+	"gitlab.com/LazyBearCT/finance-bot/internal/model"
 	"gorm.io/gorm"
 )
 

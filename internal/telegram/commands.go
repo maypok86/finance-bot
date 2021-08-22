@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/LazyBearCT/finance-bot/internal/logger"
-	"github.com/LazyBearCT/finance-bot/pkg/times"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/pkg/errors"
+	"gitlab.com/LazyBearCT/finance-bot/internal/logger"
+	"gitlab.com/LazyBearCT/finance-bot/pkg/times"
 )
 
 var (

@@ -6,11 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/LazyBearCT/finance-bot/internal/config"
-	"github.com/LazyBearCT/finance-bot/internal/repository"
-	"github.com/LazyBearCT/finance-bot/internal/service"
-	"github.com/LazyBearCT/finance-bot/internal/telegram"
 	"github.com/pkg/errors"
+	"gitlab.com/LazyBearCT/finance-bot/internal/config"
+	"gitlab.com/LazyBearCT/finance-bot/internal/repository"
+	"gitlab.com/LazyBearCT/finance-bot/internal/service"
+	"gitlab.com/LazyBearCT/finance-bot/internal/telegram"
 )
 
 // App telegram bot.

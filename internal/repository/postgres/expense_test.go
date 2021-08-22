@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/LazyBearCT/finance-bot/internal/model"
-	"github.com/LazyBearCT/finance-bot/pkg/random"
-	"github.com/LazyBearCT/finance-bot/pkg/times"
 	"github.com/stretchr/testify/require"
+	"gitlab.com/LazyBearCT/finance-bot/internal/model"
+	"gitlab.com/LazyBearCT/finance-bot/pkg/random"
+	"gitlab.com/LazyBearCT/finance-bot/pkg/times"
 	"gorm.io/gorm"
 )
 

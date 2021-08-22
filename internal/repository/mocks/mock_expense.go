@@ -8,9 +8,9 @@ import (
 	context "context"
 	reflect "reflect"
 
-	model "github.com/LazyBearCT/finance-bot/internal/model"
-	times "github.com/LazyBearCT/finance-bot/pkg/times"
 	gomock "github.com/golang/mock/gomock"
+	model "gitlab.com/LazyBearCT/finance-bot/internal/model"
+	times "gitlab.com/LazyBearCT/finance-bot/pkg/times"
 )
 
 // MockExpense is a mock of Expense interface.

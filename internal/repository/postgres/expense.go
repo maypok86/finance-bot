@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/LazyBearCT/finance-bot/internal/logger"
-	"github.com/LazyBearCT/finance-bot/internal/model"
-	"github.com/LazyBearCT/finance-bot/pkg/times"
+	"gitlab.com/LazyBearCT/finance-bot/internal/logger"
+	"gitlab.com/LazyBearCT/finance-bot/internal/model"
+	"gitlab.com/LazyBearCT/finance-bot/pkg/times"
 	"gorm.io/gorm"
 )
 

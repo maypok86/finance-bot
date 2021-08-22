@@ -8,8 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	model "github.com/LazyBearCT/finance-bot/internal/model"
 	gomock "github.com/golang/mock/gomock"
+	model "gitlab.com/LazyBearCT/finance-bot/internal/model"
 )
 
 // MockCategory is a mock of Category interface.

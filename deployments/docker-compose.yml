@@ -15,6 +15,7 @@ services:
     volumes:
       - "../configs:/configs"
       - "../migrations:/migrations"
+      - "~/projects/logs:/app/logs"
     depends_on:
       - postgres
 

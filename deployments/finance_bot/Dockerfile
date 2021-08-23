@@ -1,20 +1,29 @@
 FROM golang:1.16-alpine AS builder
-LABEL stage=builder
+LABEL maintainer="Mayshev Alex <alex.mayshev.86@gmail.com>"
 
-RUN go version
+WORKDIR /app
 
-COPY . /gitlab.com/LazyBearCT/finance-bot/
-WORKDIR /gitlab.com/LazyBearCT/finance-bot/
+COPY go.mod go.sum ./
 
 RUN go mod download
-RUN GOOS=linux go build -o ./bin/bot ./cmd/bot
+
+COPY . .
+RUN GOOS=linux go build -v -o ./bin/bot ./cmd/bot
 
 FROM alpine:latest
 
 WORKDIR /app/
 
-COPY --from=builder /gitlab.com/LazyBearCT/finance-bot/bin/bot .
-COPY --from=builder /gitlab.com/LazyBearCT/finance-bot/configs configs/
-COPY --from=builder /gitlab.com/LazyBearCT/finance-bot/migrations migrations/
+ARG LOG_DIR=/app/logs
+
+RUN mkdir -p ${LOG_DIR}
+
+ENV LOGGER_FILE=${LOG_DIR}/finance.log
+
+COPY --from=builder /app/bin/bot .
+COPY --from=builder /app/configs configs/
+COPY --from=builder /app/migrations migrations/
+
+VOLUME ${LOG_DIR}
 
 ENTRYPOINT ["./bot"]

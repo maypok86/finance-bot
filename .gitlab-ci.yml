@@ -74,7 +74,7 @@ deploy:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
   script:
-    - ssh $SERVER_USER@$SERVER_IP "rm -rf ~/projects/finance-bot"
+    - ssh $SERVER_USER@$SERVER_IP "rm -rf ~/projects/finance-bot; rm -rf ~/projects/logs/finance.log"
     - scp -r $(pwd) $SERVER_USER@$SERVER_IP:~/projects/finance-bot/
 
     - ssh $SERVER_USER@$SERVER_IP "docker stop $CONTAINER_NAME || true; docker rm $CONTAINER_NAME || true; docker rmi $TAG_LATEST || true"

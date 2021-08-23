@@ -5,8 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/LazyBearCT/finance-bot/internal/config"
-
+	"gitlab.com/LazyBearCT/finance-bot/internal/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -29,7 +28,7 @@ func getLoggerLevel(lvl string) zapcore.Level {
 	return zapcore.InfoLevel
 }
 
-// Configure logger
+// Configure logger.
 func Configure(config *config.Logger) {
 	level := getLoggerLevel(strings.ToLower(config.Level))
 

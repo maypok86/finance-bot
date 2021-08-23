@@ -3,16 +3,18 @@ package repository
 import (
 	"context"
 
-	"github.com/LazyBearCT/finance-bot/internal/config"
-	"github.com/LazyBearCT/finance-bot/internal/repository/postgres"
 	"github.com/pkg/errors"
+	"gitlab.com/LazyBearCT/finance-bot/internal/config"
+	"gitlab.com/LazyBearCT/finance-bot/internal/repository/postgres"
 )
 
+// Database ...
 type Database interface {
 	Connect() error
 	KeepAlive()
 }
 
+// Repository ...
 type Repository struct {
 	db       Database
 	Category Category
@@ -20,8 +22,9 @@ type Repository struct {
 	Expense  Expense
 }
 
+// New creates a new Repository instance.
 func New(ctx context.Context, config *config.DB) (*Repository, error) {
-	r := new(Repository)
+	var r *Repository
 	switch config.Type {
 	case "postgres":
 		db, err := postgres.New(ctx, config)

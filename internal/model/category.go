@@ -2,6 +2,7 @@ package model
 
 import "strings"
 
+// Category model.
 type Category struct {
 	Codename      string   `json:"codename"`
 	Name          string   `json:"name"`
@@ -9,6 +10,7 @@ type Category struct {
 	Aliases       []string `json:"aliases"`
 }
 
+// DBCategory model.
 type DBCategory struct {
 	Codename      string
 	Name          string
@@ -16,6 +18,7 @@ type DBCategory struct {
 	Aliases       string
 }
 
+// ToCategory converts a Category instance to DBCategory instance.
 func (dc *DBCategory) ToCategory() *Category {
 	return &Category{
 		Codename:      dc.Codename,
@@ -25,6 +28,7 @@ func (dc *DBCategory) ToCategory() *Category {
 	}
 }
 
+// ToDB converts a DBCategory instance to Category instance.
 func (c *Category) ToDB() *DBCategory {
 	return &DBCategory{
 		Codename:      c.Codename,
@@ -34,6 +38,7 @@ func (c *Category) ToDB() *DBCategory {
 	}
 }
 
+// TableName returns a DBCategory table name.
 func (dc *DBCategory) TableName() string {
 	return "categories"
 }

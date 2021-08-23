@@ -6,20 +6,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/LazyBearCT/finance-bot/internal/times"
-	"github.com/pkg/errors"
-
-	"github.com/LazyBearCT/finance-bot/internal/logger"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/pkg/errors"
+	"gitlab.com/LazyBearCT/finance-bot/internal/logger"
+	"gitlab.com/LazyBearCT/finance-bot/pkg/times"
 )
 
 var (
-	lastError      = errors.New("Расходы ещё не заведены")
-	limitError     = errors.New("failed get daily limit")
-	todayError     = errors.New("Сегодня ещё нет расходов")
-	baseTodayError = errors.New("Сегодня ещё нет базовых расходов")
-	monthError     = errors.New("В этом месяце ещё нет расходов")
-	baseMonthError = errors.New("В этом месяце ещё нет базовых расходов")
+	errLast  = errors.New("Расходы ещё не заведены")
+	errToday = errors.New("Сегодня ещё нет расходов")
+	errMonth = errors.New("В этом месяце ещё нет расходов")
 )
 
 const (
@@ -62,11 +58,7 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) {
 
 func (b *Bot) handleLimitCommand(message *tgbotapi.Message) {
 	id := message.Chat.ID
-	limit, err := b.manager.Budget.GetBaseDailyLimit()
-	if err != nil {
-		b.handleError(id, limitError)
-		return
-	}
+	limit := b.manager.Budget.GetBaseDailyLimit()
 	b.send(id, fmt.Sprintf("Базовый дневной бюджет: %d", limit))
 }
 
@@ -92,13 +84,13 @@ func (b *Bot) handleLastCommand(message *tgbotapi.Message) {
 
 	expenses, err := b.manager.Expense.GetLastExpenses()
 	if err != nil {
-		b.handleError(id, lastError)
+		b.handleError(id, errLast)
 		return
 	}
 	lastExpenses := make([]string, 0, len(expenses))
 	for _, expense := range expenses {
 		info := fmt.Sprintf("%d руб. на %s — нажми ", expense.Amount, expense.CategoryCodename)
-		del := fmt.Sprintf("/del%d для удаления", expense.ID)
+		del := fmt.Sprintf("/%s%d для удаления", commandDelete, expense.ID)
 		lastExpenses = append(lastExpenses, info+del)
 	}
 	b.send(id, "Последние сохранённые траты:\n\n* "+strings.Join(lastExpenses, "\n\n* "))
@@ -109,9 +101,9 @@ func (b *Bot) getStatisticsByPeriod(period times.Period) (string, error) {
 	var periodError error
 	switch period {
 	case times.Day:
-		periodError = todayError
+		periodError = errToday
 	case times.Month:
-		periodError = monthError
+		periodError = errMonth
 	default:
 		panic("unknown period")
 	}
@@ -119,17 +111,14 @@ func (b *Bot) getStatisticsByPeriod(period times.Period) (string, error) {
 		return "", periodError
 	}
 	baseExpenses := b.manager.Expense.GetBaseByPeriod(period)
-	dailyLimit, err := b.manager.Budget.GetBaseDailyLimit()
-	if err != nil {
-		return "", limitError
-	}
+	dailyLimit := b.manager.Budget.GetBaseDailyLimit()
 	var text string
 	all := fmt.Sprintf("всего — %d руб.\n", allExpenses)
 	switch period {
 	case times.Day:
 		text = "Расходы сегодня:\n"
 		text += all + fmt.Sprintf("базовые — %d руб. из %d руб.\n\n", baseExpenses, dailyLimit)
-		text += "За текущий месяц: /month"
+		text += fmt.Sprintf("За текущий месяц: /%s", commandMonth)
 	case times.Month:
 		text = "Расходы в текущем месяце:\n"
 		text += all + fmt.Sprintf("базовые — %d руб. из %d руб.", baseExpenses, time.Now().Day()*dailyLimit)
@@ -165,9 +154,9 @@ func (b *Bot) handleDeleteCommand(message *tgbotapi.Message) {
 
 func (b *Bot) handleStartCommand(message *tgbotapi.Message) {
 	start := "Бот для учёта финансов\n\n"
-	start += "Добавить расход: 250 такси\nСегодняшняя статистика: /today\n"
-	start += "За текущий месяц: /month\nПоследние внесённые расходы: /last\nКатегории трат: /categories\n"
-	start += "Базовый дневной бюджет: /limit"
+	start += fmt.Sprintf("Добавить расход: 250 такси\nСегодняшняя статистика: /%s\n", commandToday)
+	start += fmt.Sprintf("За текущий месяц: /%s\nПоследние внесённые расходы: /%s\n", commandMonth, commandLast)
+	start += fmt.Sprintf("Категории трат: /%s\nБазовый дневной бюджет: /%s", commandCategories, commandLimit)
 	b.send(message.Chat.ID, start)
 }
 

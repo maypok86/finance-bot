@@ -21,6 +21,8 @@ stages:
 
 test:
   stage: test
+  tags:
+    - runner
   services:
     - postgres
   variables:
@@ -37,20 +39,19 @@ test:
 publish:
   image: docker:latest
   stage: publish
+  tags:
+    - runner
   services:
     - docker:dind
   before_script:
     - apk update
     - apk upgrade
     - apk add doctl --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
-    - apk add py-pip python3-dev libffi-dev openssl-dev gcc libc-dev make
-    - pip install docker-compose
   script:
     - doctl auth init --access-token $DIGITALOCEAN_ACCESS_TOKEN
     - doctl registry login --expiry-seconds 600
 
-    - TAG=$CI_COMMIT_SHORT_SHA docker-compose -f deployments/docker-compose.yml build
-    - TAG=latest docker-compose -f deployments/docker-compose.yml build
+    - docker build -f ./deployments/finance_bot/Dockerfile -t $TAG_LATEST -t $TAG_COMMIT .
 
     - docker push $TAG_LATEST
     - docker push $TAG_COMMIT
@@ -60,6 +61,8 @@ publish:
 deploy:
   image: ubuntu:latest
   stage: deploy
+  tags:
+    - runner
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
     - eval $(ssh-agent -s)
@@ -69,18 +72,15 @@ deploy:
     - ssh-keyscan $SERVER_IP >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - echo "TAG=$CI_COMMIT_SHORT_SHA\nREGISTRY=$REGISTRY\nIMAGE_NAME=$IMAGE_NAME\nCONTAINER_NAME=$CONTAINER_NAME" > .env
-    - echo "BOT_TOKEN=$BOT_TOKEN\nACCESS_ID=$ACCESS_ID\nDB_PASSWORD=$DB_PASSWORD\nDB_USER=$DB_USER\n" >> .env
 
   script:
     - ssh $SERVER_USER@$SERVER_IP "rm -rf ~/projects/finance-bot"
     - scp -r $(pwd) $SERVER_USER@$SERVER_IP:~/projects/finance-bot/
 
-    - ssh $SERVER_USER@$SERVER_IP "docker stop $CONTAINER_NAME || true"
-    - ssh $SERVER_USER@$SERVER_IP "docker rm $CONTAINER_NAME || true"
+    - ssh $SERVER_USER@$SERVER_IP "docker stop $CONTAINER_NAME || true; docker rm $CONTAINER_NAME || true; docker rmi $TAG_LATEST || true"
     - ssh $SERVER_USER@$SERVER_IP "docker login -u $DIGITALOCEAN_ACCESS_TOKEN -p $DIGITALOCEAN_ACCESS_TOKEN $REGISTRY"
-    - ssh $SERVER_USER@$SERVER_IP "docker pull $TAG_COMMIT"
-    - ssh $SERVER_USER@$SERVER_IP "cd ~/projects/finance-bot; source .env && docker-compose -f deployments/docker-compose.yml up -d; rm -rf .env"
+    - ssh $SERVER_USER@$SERVER_IP "docker pull $TAG_LATEST"
+    - ssh $SERVER_USER@$SERVER_IP "cd ~/projects/finance-bot; TAG_LATEST=$TAG_LATEST CONTAINER_NAME=$CONTAINER_NAME BOT_TOKEN=$BOT_TOKEN ACCESS_ID=$ACCESS_ID DB_PASSWORD=$DB_PASSWORD DB_USER=$DB_USER docker-compose -f deployments/docker-compose.yml up -d"
   environment:
     name: production
     url: http://$SERVER_IP

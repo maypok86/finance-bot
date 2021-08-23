@@ -3,27 +3,27 @@ package telegram
 import (
 	"fmt"
 
-	"github.com/LazyBearCT/finance-bot/internal/times"
-
-	"github.com/LazyBearCT/finance-bot/internal/logger"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/pkg/errors"
+	"gitlab.com/LazyBearCT/finance-bot/internal/logger"
+	"gitlab.com/LazyBearCT/finance-bot/pkg/times"
 )
 
 func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 	for update := range updates {
-		if update.Message == nil { // ignore any non-Message Updates
+		message := update.Message
+		if message == nil { // ignore any non-Message Updates
 			continue
 		}
-		if update.Message.From.ID != b.config.AccessID {
+		if message.From.ID != b.config.AccessID {
 			return errors.New("wrong id")
 		}
 
-		if update.Message.IsCommand() {
-			b.handleCommand(update.Message)
+		if message.IsCommand() {
+			b.handleCommand(message)
 			continue
 		}
-		b.handleMessage(update.Message)
+		b.handleMessage(message)
 	}
 	return nil
 }

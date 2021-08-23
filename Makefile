@@ -8,9 +8,10 @@ LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%d
 
 .PHONY: setup
 setup: ## Install all the build and lint dependencies
-	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.37.0
-	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
-	go get golang.org/x/tools/cmd/goimports
+	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.41.1
+	go get github.com/daixiang0/gci
+	GO111MODULE=on go get mvdan.cc/gofumpt
+	go mod download
 
 .PHONY: build
 build: ## Build a version
@@ -26,8 +27,8 @@ version: build ## Build and view project version
 	$(BIN) version
 
 .PHONY: fmt
-fmt: ## Run goimports on all go files
-	find . -name '*.go' -not -wholename './vendor/*' | while read -r file; do goimports -w "$$file"; done
+fmt: ## Run gci on all go files
+	find . -name '*.go' -not -wholename './vendor/*' | while read -r file; do gci -w "$$file" && gofumpt -w "$$file"; done
 
 .PHONY: lint
 lint: ## Run all the linters
@@ -37,7 +38,16 @@ lint: ## Run all the linters
 test: ## Run all the tests
 	echo -n > coverage.txt
 	echo -n > develop.log
-	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverprofile=coverage.txt -v -race -timeout=30s ./...
+	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverprofile=coverage.txt -v -race ./...
+
+.PHONY: testup
+testup:
+	docker run --name test_postgres -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=test_bot -d postgres
+
+.PHONY: testdown
+testdown:
+	docker stop test_postgres
+	docker rm test_postgres
 
 .PHONY: cover
 cover: test ## Run all the tests and opens the coverage report

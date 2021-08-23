@@ -5,23 +5,25 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/LazyBearCT/finance-bot/internal/times"
-
-	"github.com/LazyBearCT/finance-bot/internal/logger"
-	"github.com/LazyBearCT/finance-bot/internal/model"
+	"gitlab.com/LazyBearCT/finance-bot/internal/logger"
+	"gitlab.com/LazyBearCT/finance-bot/internal/model"
+	"gitlab.com/LazyBearCT/finance-bot/pkg/times"
 	"gorm.io/gorm"
 )
 
+// ExpensePostgres repository.
 type ExpensePostgres struct {
 	db *gorm.DB
 }
 
+// NewExpenseRepository creates a new ExpensePostgres instance.
 func NewExpenseRepository(db *DB) *ExpensePostgres {
 	return &ExpensePostgres{
 		db: db.db,
 	}
 }
 
+// CreateExpense creates a new model.Expense instance.
 func (ep *ExpensePostgres) CreateExpense(ctx context.Context, expense *model.Expense) (*model.Expense, error) {
 	if err := ep.db.Create(expense).Error; err != nil {
 		return nil, err
@@ -29,10 +31,12 @@ func (ep *ExpensePostgres) CreateExpense(ctx context.Context, expense *model.Exp
 	return expense, nil
 }
 
+// DeleteExpenseByID deletes model.Expense instance by id.
 func (ep *ExpensePostgres) DeleteExpenseByID(ctx context.Context, id int) error {
 	return ep.db.Where("id = ?", id).Delete(model.Expense{}).Error
 }
 
+// GetLastExpenses returns last model.Expense instances.
 func (ep *ExpensePostgres) GetLastExpenses(ctx context.Context) ([]*model.Expense, error) {
 	var expenses []*model.Expense
 	rows, err := ep.db.Model(new(model.Expense)).Select("expenses.id, expenses.amount, categories.name").Joins(
@@ -60,6 +64,7 @@ func (ep *ExpensePostgres) GetLastExpenses(ctx context.Context) ([]*model.Expens
 	return expenses, nil
 }
 
+// GetAllExpensesByPeriod returns all model.Expense instances by period.
 func (ep *ExpensePostgres) GetAllExpensesByPeriod(ctx context.Context, period times.Period) (int, error) {
 	var allExpenses int
 	if err := ep.db.Model(new(model.Expense)).Select("SUM(amount)").Where(
@@ -70,6 +75,7 @@ func (ep *ExpensePostgres) GetAllExpensesByPeriod(ctx context.Context, period ti
 	return allExpenses, nil
 }
 
+// GetBaseExpensesByPeriod returns base model.Expense instances by period.
 func (ep *ExpensePostgres) GetBaseExpensesByPeriod(ctx context.Context, period times.Period) (int, error) {
 	var baseExpenses int
 	if err := ep.db.Model(new(model.Expense)).Select("SUM(amount)").Where(

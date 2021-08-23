@@ -34,7 +34,3 @@ VALUES
     ('other', 'прочее', true, '');
 
 INSERT INTO budgets (codename, daily_limit) VALUES ('base', 500);
-
-INSERT INTO expenses (amount, category_codename, raw_text)
-VALUES
-    (250, 'products', '250 пиво')

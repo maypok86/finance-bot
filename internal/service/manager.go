@@ -3,16 +3,18 @@ package service
 import (
 	"context"
 
-	"github.com/LazyBearCT/finance-bot/internal/repository"
 	"github.com/pkg/errors"
+	"gitlab.com/LazyBearCT/finance-bot/internal/repository"
 )
 
+// Manager of services.
 type Manager struct {
 	Category Category
 	Budget   Budget
 	Expense  Expense
 }
 
+// NewManager creates a new Manager instance.
 func NewManager(ctx context.Context, repo *repository.Repository) (*Manager, error) {
 	if repo == nil {
 		return nil, errors.New("No repo provided")

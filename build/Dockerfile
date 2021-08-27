@@ -7,8 +7,12 @@ COPY go.mod go.sum ./
 
 RUN go mod download
 
+RUN apk update && apk add git
+
 COPY . .
-RUN GOOS=linux go build -v -o ./bin/bot ./cmd/bot
+RUN GOOS=linux go build \
+    -ldflags "-X 'main.release=release' -X 'main.buildDate=$(date -u +%Y-%m-%dT%H:%M:%S)' -X 'main.gitHash=$(git log --format="%h" -n 1)'" \
+    -v -o ./bin/bot ./cmd/bot
 
 FROM alpine:latest
 

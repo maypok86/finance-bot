@@ -51,7 +51,7 @@ publish:
     - doctl auth init --access-token $DIGITALOCEAN_ACCESS_TOKEN
     - doctl registry login --expiry-seconds 600
 
-    - docker build -f ./deployments/finance_bot/Dockerfile -t $TAG_LATEST -t $TAG_COMMIT .
+    - docker build -f ./build/Dockerfile -t $TAG_LATEST -t $TAG_COMMIT .
 
     - docker push $TAG_LATEST
     - docker push $TAG_COMMIT

@@ -5,7 +5,7 @@ services:
     image: ${TAG_LATEST}
     build:
       context: ..
-      dockerfile: ./deployments/finance_bot/Dockerfile
+      dockerfile: build/Dockerfile
     restart: always
     environment:
       - BOT_TOKEN=${BOT_TOKEN}

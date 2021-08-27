@@ -69,7 +69,7 @@ clean: ## Remove temporary files
 
 .PHONY: up
 up:
-	source ./scripts/env.sh && docker-compose -f deployments/docker-compose.yml up
+	source ./scripts/env.sh && docker-compose -f deployments/docker-compose.yml up -d
 
 .PHONY: down
 down:

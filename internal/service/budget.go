@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"gitlab.com/LazyBearCT/finance-bot/internal/repository"
+	"github.com/maypok86/finance-bot/internal/repository"
 )
 
 //go:generate mockgen -source=budget.go -destination=mocks/mock_budget.go

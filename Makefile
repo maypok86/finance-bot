@@ -8,10 +8,9 @@ LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%d
 
 .PHONY: setup
 setup: ## Install all the build and lint dependencies
-	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.41.1
-	go get github.com/daixiang0/gci
-	GO111MODULE=on go get mvdan.cc/gofumpt
-	go mod download
+	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.45.2
+	go install github.com/daixiang0/gci@latest
+	GO111MODULE=on go install mvdan.cc/gofumpt@latest
 
 .PHONY: build
 build: ## Build a version

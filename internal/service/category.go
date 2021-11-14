@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	"gitlab.com/LazyBearCT/finance-bot/internal/model"
-	"gitlab.com/LazyBearCT/finance-bot/internal/repository"
+	"github.com/maypok86/finance-bot/internal/model"
+	"github.com/maypok86/finance-bot/internal/repository"
 )
 
 //go:generate mockgen -source=category.go -destination=mocks/mock_category.go

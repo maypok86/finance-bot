@@ -3,9 +3,9 @@ package repository
 import (
 	"context"
 
+	"github.com/maypok86/finance-bot/internal/config"
+	"github.com/maypok86/finance-bot/internal/repository/postgres"
 	"github.com/pkg/errors"
-	"gitlab.com/LazyBearCT/finance-bot/internal/config"
-	"gitlab.com/LazyBearCT/finance-bot/internal/repository/postgres"
 )
 
 // Database ...

@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/maypok86/finance-bot/internal/repository"
 	"github.com/pkg/errors"
-	"gitlab.com/LazyBearCT/finance-bot/internal/repository"
 )
 
 // Manager of services.

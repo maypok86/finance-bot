@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	model "gitlab.com/LazyBearCT/finance-bot/internal/model"
+	model "github.com/maypok86/finance-bot/internal/model"
 )
 
 // MockBudget is a mock of Budget interface.

@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"gitlab.com/LazyBearCT/finance-bot/internal/model"
-	"gitlab.com/LazyBearCT/finance-bot/pkg/times"
+	"github.com/maypok86/finance-bot/internal/model"
+	"github.com/maypok86/finance-bot/pkg/times"
 )
 
 //go:generate mockgen -source=expense.go -destination=mocks/mock_expense.go

@@ -5,9 +5,9 @@ import (
 	"flag"
 	"log"
 
-	"gitlab.com/LazyBearCT/finance-bot/internal/app/bot"
-	"gitlab.com/LazyBearCT/finance-bot/internal/config"
-	"gitlab.com/LazyBearCT/finance-bot/internal/logger"
+	"github.com/maypok86/finance-bot/internal/app/bot"
+	"github.com/maypok86/finance-bot/internal/config"
+	"github.com/maypok86/finance-bot/internal/logger"
 )
 
 var configPath string

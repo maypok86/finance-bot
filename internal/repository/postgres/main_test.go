@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"gitlab.com/LazyBearCT/finance-bot/internal/config"
-	"gitlab.com/LazyBearCT/finance-bot/internal/model"
+	"github.com/maypok86/finance-bot/internal/config"
+	"github.com/maypok86/finance-bot/internal/model"
 )
 
 var (

@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/maypok86/finance-bot/internal/config"
 	"github.com/stretchr/testify/require"
-	"gitlab.com/LazyBearCT/finance-bot/internal/config"
 )
 
 func Test_Logger(t *testing.T) {

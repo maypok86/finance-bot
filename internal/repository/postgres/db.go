@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.com/LazyBearCT/finance-bot/internal/config"
-	"gitlab.com/LazyBearCT/finance-bot/internal/logger"
+	"github.com/maypok86/finance-bot/internal/config"
+	"github.com/maypok86/finance-bot/internal/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

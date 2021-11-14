@@ -5,11 +5,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/maypok86/finance-bot/internal/model"
+	mock_repository "github.com/maypok86/finance-bot/internal/repository/mocks"
+	"github.com/maypok86/finance-bot/pkg/random"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
-	"gitlab.com/LazyBearCT/finance-bot/internal/model"
-	mock_repository "gitlab.com/LazyBearCT/finance-bot/internal/repository/mocks"
-	"gitlab.com/LazyBearCT/finance-bot/pkg/random"
 )
 
 func TestGetBaseDailyLimit(t *testing.T) {

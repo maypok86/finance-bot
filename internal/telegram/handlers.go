@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/maypok86/finance-bot/internal/logger"
+	"github.com/maypok86/finance-bot/pkg/times"
 	"github.com/pkg/errors"
-	"gitlab.com/LazyBearCT/finance-bot/internal/logger"
-	"gitlab.com/LazyBearCT/finance-bot/pkg/times"
 )
 
 func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
